@@ -232,13 +232,13 @@ class _LoginPageState extends State<LoginPage> {
   }) {
     return InkWell(
       onTap: onPressed,
-      child: CustomIcon.social(
-        icon: icon,
-        color: color,
-        backgroundColor: color.withOpacity(0.1),
-        onTap: onPressed,
-        size: 24,
-        padding: 13,
+      child: Container(
+        padding: const EdgeInsets.all(13),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 24, color: color),
       ),
     );
   }

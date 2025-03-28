@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import '../../components/icons/index.dart';
 
 class ProductDetailPage extends StatefulWidget {
@@ -561,3 +561,4 @@ class _ProductDetailPageState extends State<ProductDetailPage>
     );
   }
 }
+*/
