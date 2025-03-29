@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:project/components/icons/favorite_icon.dart';
-import 'package:project/components/icons/favorite_page_hover.dart';
+import 'package:project/components/icons/cart_icon.dart';
+import 'package:project/components/icons/cart_hover.dart';
 
-class FavoriteButton extends StatefulWidget {
+class CartButton extends StatefulWidget {
   final VoidCallback? onTap;
   final bool isSelected;
 
-  const FavoriteButton({super.key, this.onTap, this.isSelected = false});
+  const CartButton({super.key, this.onTap, this.isSelected = false});
 
   @override
-  State<FavoriteButton> createState() => _FavoriteButtonState();
+  State<CartButton> createState() => _CartButtonState();
 }
 
-class _FavoriteButtonState extends State<FavoriteButton> {
+class _CartButtonState extends State<CartButton> {
   bool _isHovering = false;
 
   @override
@@ -29,7 +29,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
         width: 162,
         height: 58,
         decoration: BoxDecoration(
-          color: const Color(0xFFED7375),
+          color: const Color(0xFFD9D9D9),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -37,21 +37,17 @@ class _FavoriteButtonState extends State<FavoriteButton> {
           children: [
             // Normal icon when not hovering, hover icon when hovering
             _isHovering
-                ? const FavoritePageHoverIcon(width: 36, height: 36)
-                : const FavoriteIcon(
-                  width: 24,
-                  height: 24,
-                  color: Colors.white,
-                ),
+                ? const CartHoverIcon(width: 36, height: 38)
+                : const CartIcon(width: 24, height: 24, color: Colors.black),
             const SizedBox(width: 8),
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),
               style: TextStyle(
                 fontSize: _isHovering ? 26 : 20,
-                color: _isHovering ? const Color(0xFFFFAE00) : Colors.white,
+                color: _isHovering ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w500,
               ),
-              child: const Text("Favorites"),
+              child: const Text("My Cart"),
             ),
           ],
         ),

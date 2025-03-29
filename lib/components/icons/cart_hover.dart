@@ -4,43 +4,46 @@ import 'package:flutter_svg/flutter_svg.dart';
 class CartHoverIcon extends StatelessWidget {
   final double width;
   final double height;
-  final Color color;
-  final VoidCallback? onTap;
+  final Color? color;
+  final Function()? onTap;
 
   const CartHoverIcon({
     super.key,
     this.width = 24,
     this.height = 24,
-    this.color = Colors.black,
+    this.color,
     this.onTap,
   });
 
+  static const String svgString = '''
+<svg width="39" height="36" viewBox="0 0 39 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M14.9373 30.75C16.6286 30.75 17.9998 29.5747 17.9998 28.125C17.9998 26.6753 16.6286 25.5 14.9373 25.5C13.2459 25.5 11.8748 26.6753 11.8748 28.125C11.8748 29.5747 13.2459 30.75 14.9373 30.75Z" fill="#792AE8"/>
+  <path d="M24.5623 30.75C26.2536 30.75 27.6248 29.5747 27.6248 28.125C27.6248 26.6753 26.2536 25.5 24.5623 25.5C22.8709 25.5 21.4998 26.6753 21.4998 28.125C21.4998 29.5747 22.8709 30.75 24.5623 30.75Z" fill="#792AE8"/>
+  <path fillRule="evenodd" clipRule="evenodd" d="M9.91475 8.99849L26.8075 8.9745C28.3632 8.973 29.8385 9.56098 30.8378 10.581C31.837 11.6025 32.257 12.951 31.9857 14.262L30.7363 20.2875C30.29 22.4355 28.1112 24 25.5667 24H13.9205C11.383 24 9.20951 22.4445 8.75626 20.3055L6.30101 8.73152C6.14876 8.01902 5.42426 7.5 4.57901 7.5H0.499756C-0.466244 7.5 -1.25024 6.828 -1.25024 6C-1.25024 5.172 -0.466244 4.5 0.499756 4.5H4.57901C7.11651 4.5 9.29 6.05552 9.74325 8.19452L9.91475 8.99849Z" fill="#792AE8"/>
+</svg>
+''';
+
   @override
   Widget build(BuildContext context) {
-    final svgIcon = SvgPicture.string(
-      svgString,
-      width: width,
-      height: height,
-      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-    );
-
     if (onTap != null) {
       return InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(4),
-        child: svgIcon,
+        child: SvgPicture.string(
+          svgString,
+          width: width,
+          height: height,
+          colorFilter:
+              color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
+        ),
       );
     }
 
-    return svgIcon;
+    return SvgPicture.string(
+      svgString,
+      width: width,
+      height: height,
+      colorFilter:
+          color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
+    );
   }
-
-  static const String svgString = '''
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="24" height="24" rx="8" fill="#4A80F0" fill-opacity="0.1"/>
-  <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z" stroke="#4A80F0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z" stroke="#4A80F0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6" stroke="#4A80F0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-  ''';
 }

@@ -10,140 +10,168 @@ class SignInOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!isOpen) return const SizedBox.shrink();
 
-    return GestureDetector(
-      onTap: onClose,
-      behavior: HitTestBehavior.translucent,
-      child: Container(
-        color: Colors.transparent,
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // Dialog position
-            Positioned(
-              top: 60,
-              right: 20,
-              child: GestureDetector(
-                onTap: () {},
-                child: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    width: 350,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          spreadRadius: 2,
-                        ),
-                      ],
+    return Material(
+      color: Colors.transparent,
+      child: Stack(
+        children: [
+          // Transparent overlay for closing
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: onClose,
+              behavior: HitTestBehavior.translucent,
+              child: Container(color: Colors.transparent),
+            ),
+          ),
+
+          // Triangle indicator
+          Positioned(
+            top: 20,
+            right: 185,
+            child: Transform.rotate(
+              angle: 0.785398, // 45 degrees in radians
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.95),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      spreadRadius: 1,
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildMenuItem(
-                          context: context,
-                          title: 'Sign In',
-                          icon: Icons.login,
-                          onTap: () {
-                            onClose();
-                            Navigator.pushNamed(context, '/signin');
-                          },
-                        ),
-
-                        _buildMenuItem(
-                          context: context,
-                          title: 'Sign Up',
-                          icon: Icons.person_add,
-                          onTap: () {
-                            onClose();
-                            Navigator.pushNamed(context, '/sign-up');
-                          },
-                        ),
-
-                        _buildMenuItem(
-                          context: context,
-                          title: 'User Information',
-                          icon: Icons.person,
-                          onTap: () {
-                            onClose();
-                            Navigator.pushNamed(context, '/user-info');
-                          },
-                        ),
-
-                        _buildMenuItem(
-                          context: context,
-                          title: 'My Reviews',
-                          icon: Icons.star,
-                          onTap: () {
-                            onClose();
-                            Navigator.pushNamed(context, '/my-reviews');
-                          },
-                        ),
-
-                        _buildMenuItem(
-                          context: context,
-                          title: 'My Orders',
-                          icon: Icons.shopping_bag,
-                          onTap: () {
-                            onClose();
-                            Navigator.pushNamed(context, '/my-orders');
-                          },
-                          isLast: true,
-                        ),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+
+          // Menu container
+          Positioned(
+            top: 30,
+            right: 20,
+            child: Container(
+              width: 350,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.95),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Sign In
+                    _buildMenuItem(
+                      icon: Icons.login,
+                      title: 'Sign In',
+                      onTap: () {
+                        onClose();
+                        Navigator.pushNamed(context, '/signin');
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Sign Up
+                    _buildMenuItem(
+                      icon: Icons.person_add,
+                      title: 'Sign Up',
+                      onTap: () {
+                        onClose();
+                        Navigator.pushNamed(context, '/sign-up');
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // User Information
+                    _buildMenuItem(
+                      icon: Icons.person,
+                      title: 'User Information',
+                      onTap: () {
+                        onClose();
+                        Navigator.pushNamed(context, '/user-info');
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // My Reviews
+                    _buildMenuItem(
+                      icon: Icons.star,
+                      title: 'My Reviews',
+                      onTap: () {
+                        onClose();
+                        Navigator.pushNamed(context, '/my-reviews');
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // My Orders
+                    _buildMenuItem(
+                      icon: Icons.shopping_bag,
+                      title: 'My Orders',
+                      onTap: () {
+                        onClose();
+                        Navigator.pushNamed(context, '/my-orders');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildMenuItem({
-    required BuildContext context,
-    required String title,
     required IconData icon,
+    required String title,
     required VoidCallback onTap,
-    bool isLast = false,
   }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
+      hoverColor: Colors.grey[100],
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          border:
-              !isLast
-                  ? Border(
-                    bottom: BorderSide(
-                      color: Colors.grey.withOpacity(0.2),
-                      width: 1,
-                    ),
-                  )
-                  : null,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.transparent, width: 2),
         ),
         child: Row(
           children: [
+            // Icon container
             Container(
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
+                color: const Color(0xFF9747FF).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
+              alignment: Alignment.center,
               child: Icon(icon, color: const Color(0xFF9747FF), size: 24),
             ),
             const SizedBox(width: 16),
+            // Title
             Text(
               title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
             ),
           ],
         ),

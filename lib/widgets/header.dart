@@ -6,6 +6,8 @@ import 'package:project/components/icons/arrow_right.dart';
 import 'package:project/components/icons/group_team_hover.dart';
 import 'package:project/widgets/sign_in_overlay.dart';
 import 'package:project/widgets/favorite_button.dart';
+import 'package:project/widgets/cart_button.dart';
+import 'package:project/widgets/sign_in_button.dart';
 
 class Header extends StatefulWidget {
   const Header({super.key});
@@ -22,7 +24,7 @@ class _HeaderState extends State<Header> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
         Container(
           padding: const EdgeInsets.all(16),
@@ -111,72 +113,12 @@ class _HeaderState extends State<Header> {
                 child: Row(
                   children: [
                     // Sign In Button
-                    MouseRegion(
-                      onEnter: (_) => setState(() => _isHoveringSignIn = true),
-                      onExit: (_) => setState(() => _isHoveringSignIn = false),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _isSignInOpen = !_isSignInOpen;
-                          });
-                        },
-                        child: Container(
-                          width: 182,
-                          height: 58,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF8CFF75),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            children: [
-                              _isHoveringSignIn
-                                  ? const GroupTeamHoverIcon(
-                                    width: 24,
-                                    height: 24,
-                                  )
-                                  : const UserIcon(width: 24, height: 24),
-                              const SizedBox(width: 8),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Sign in",
-                                    style: TextStyle(
-                                      fontSize: _isHoveringSignIn ? 16 : 14,
-                                      color:
-                                          _isHoveringSignIn
-                                              ? const Color(0xFF792AE8)
-                                              : Colors.black,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    "or sign up",
-                                    style: TextStyle(
-                                      fontSize: _isHoveringSignIn ? 16 : 14,
-                                      color:
-                                          _isHoveringSignIn
-                                              ? const Color(0xFF792AE8)
-                                              : Colors.black,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                                color:
-                                    _isHoveringSignIn
-                                        ? const Color(0xFF792AE8)
-                                        : Colors.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    SignInButton(
+                      onTap: () {
+                        setState(() {
+                          _isSignInOpen = !_isSignInOpen;
+                        });
+                      },
                     ),
 
                     const SizedBox(width: 16),
@@ -191,47 +133,10 @@ class _HeaderState extends State<Header> {
                     const SizedBox(width: 16),
 
                     // Cart Button
-                    MouseRegion(
-                      onEnter: (_) => setState(() => _isHoveringCart = true),
-                      onExit: (_) => setState(() => _isHoveringCart = false),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/cart');
-                        },
-                        child: Container(
-                          width: 162,
-                          height: 58,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFD9D9D9),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.shopping_cart,
-                                color:
-                                    _isHoveringCart
-                                        ? Colors.white
-                                        : Colors.black,
-                                size: _isHoveringCart ? 28 : 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                "My Cart",
-                                style: TextStyle(
-                                  fontSize: _isHoveringCart ? 18 : 16,
-                                  color:
-                                      _isHoveringCart
-                                          ? Colors.white
-                                          : Colors.black,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    CartButton(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/cart');
+                      },
                     ),
                   ],
                 ),
@@ -240,15 +145,23 @@ class _HeaderState extends State<Header> {
           ),
         ),
 
-        // SignIn Overlay
+        // Sign In Overlay
         if (_isSignInOpen)
-          SignInOverlay(
-            isOpen: _isSignInOpen,
-            onClose: () {
-              setState(() {
-                _isSignInOpen = false;
-              });
-            },
+          SizedBox(
+            height: MediaQuery.of(context).size.height - 200,
+            width: MediaQuery.of(context).size.width,
+            child: Stack(
+              children: [
+                SignInOverlay(
+                  isOpen: _isSignInOpen,
+                  onClose: () {
+                    setState(() {
+                      _isSignInOpen = false;
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
       ],
     );
