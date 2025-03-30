@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+// Kendi projenize göre importları güncelleyin
 import 'package:project/components/icons/user_icon.dart';
-import 'package:project/components/icons/favorite_sidebar.dart';
-import 'package:project/components/icons/cart_hover.dart';
-import 'package:project/components/icons/arrow_right.dart';
-import 'package:project/components/icons/group_team_hover.dart';
+import 'package:project/components/icons/favorite_sidebar.dart'; // FavoriteButton artık kendi ikonlarını kullanıyor, bu belki gereksiz olabilir
+import 'package:project/components/icons/cart_hover.dart'; // CartButton da kendi ikonlarını kullanacak, bu belki gereksiz olabilir
 import 'package:project/widgets/sign_in_overlay.dart';
-import 'package:project/widgets/favorite_button.dart';
-import 'package:project/widgets/cart_button.dart';
 import 'package:project/widgets/sign_in_button.dart';
+import 'package:project/widgets/favorite_button.dart'; // <-- YENİ İMPORT
+import 'package:project/widgets/cart_button.dart'; // <-- YENİ İMPORT (Bu dosyanın var olduğunu varsayıyoruz)
 
 class Header extends StatefulWidget {
   const Header({super.key});
@@ -18,152 +17,250 @@ class Header extends StatefulWidget {
 
 class _HeaderState extends State<Header> {
   bool _isSignInOpen = false;
-  bool _isHoveringSignIn = false;
+  // bool _isHoveringSignIn = false; // SignInButton kendi hover state'ini yönetiyor
   bool _isHoveringFavorites = false;
   bool _isHoveringCart = false;
 
+  // OverlayEntry oluşturmak için bir değişken
+  OverlayEntry? _overlayEntry;
+
+  @override
+  void dispose() {
+    // Widget dispose edildiğinde overlay'i temizle
+    _removeOverlay();
+    super.dispose();
+  }
+
+  // Overlay'i gösterme fonksiyonu
+  void _showSignInOverlay() {
+    // Önce mevcut bir overlay varsa kaldır
+    _removeOverlay();
+
+    // Overlay'i tüm ekranın en üstünde göster
+    _overlayEntry = OverlayEntry(
+      builder:
+          (context) => SignInOverlay(
+            isOpen: true,
+            onClose: () {
+              _removeOverlay();
+              setState(() {
+                _isSignInOpen = false;
+              });
+            },
+          ),
+    );
+
+    // Overlay'i ekle
+    Overlay.of(context).insert(_overlayEntry!);
+    setState(() {
+      _isSignInOpen = true;
+    });
+  }
+
+  // Overlay'i kaldırma fonksiyonu
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      width: double.infinity,
+      // Header'ın arka plan rengini isterseniz buradan ayarlayabilirsiniz
+      // color: Colors.white,
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // Dikeyde başlangıçta hizala
             children: [
-              Row(
+              // --- Sol Bölüm: Logo ve Branding ---
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Logo
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, '/');
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.shopping_bag_outlined,
-                          size: 40,
-                          color: Colors.white,
-                        ),
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(82, 99, 255, 1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: IconButton(
+                      tooltip: 'Ana Sayfa', // Erişilebilirlik için
+                      icon: const Icon(
+                        Icons.shopping_bag_outlined,
+                        size: 28,
+                        color: Colors.white,
                       ),
+                      onPressed: () {
+                        // Ana sayfaya yönlendirme
+                        // Navigator.pushReplacementNamed(context, '/');
+                      },
                     ),
                   ),
-
-                  // Search Bar
-                  Expanded(
-                    child: Container(
-                      height: 48,
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD9D9D9),
-                        borderRadius: BorderRadius.circular(12),
+                  const SizedBox(height: 4),
+                  // Branding text (logonun altına konumlandırıldı)
+                  SizedBox(
+                    width: 220, // Genişliği ayarlayabilirsiniz
+                    child: Text(
+                      "Atalay's store management platform",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily:
+                            'Raleway', // Fontu projenize eklediğinizden emin olun
+                        color: Colors.grey[800],
                       ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Search for product, category or brand',
-                          hintStyle: TextStyle(
-                            color: Colors.grey[700],
-                            fontSize: 14,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            color: Colors.grey[700],
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                        ),
-                      ),
+                      maxLines: 2, // İki satıra kadar izin ver
+                      overflow: TextOverflow.ellipsis, // Sığmazsa ... ile bitir
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 8),
-
-              // Store name
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Atalay's store management platform",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[800],
+              const SizedBox(
+                width: 16,
+              ), // Logo/Branding ile Arama çubuğu arası boşluk
+              // --- Orta Bölüm: Arama Çubuğu ---
+              Expanded(
+                flex: 3, // Arama çubuğunun esnek genişlik oranı
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search for product, category or brand',
+                      hintStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 15,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.grey[600],
+                        size: 22,
+                      ),
+                      border: InputBorder.none, // Çerçeveyi kaldırır
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14, // Dikey hizalama için padding
+                      ),
                     ),
                   ),
                 ),
               ),
+              const SizedBox(
+                width: 40,
+              ), // Arama çubuğu ve sağ butonlar arası boşluk
+              // --- Sağ Bölüm: Aksiyon Butonları ---
+              Row(
+                mainAxisSize: MainAxisSize.min, // Butonlar kadar yer kapla
+                children: [
+                  // Sign In Button (Değişiklik Yok)
+                  SignInButton(onTap: _showSignInOverlay),
 
-              const SizedBox(height: 16),
+                  const SizedBox(width: 30), // Butonlar arası boşluk
+                  // Favorites Button (ÖZEL WIDGET KULLANILARAK)
+                  FavoriteButton(
+                    // <-- MouseRegion/GestureDetector yerine direkt widget
+                    onTap: () {
+                      // Favoriler sayfasına gitme işlemi
+                      print("Favorites Tapped!"); // Örnek eylem
+                      // Navigator.pushNamed(context, '/favorites');
+                    },
+                    // isSelected: false, // Gerekirse bu parametreyi kullanabilirsiniz
+                  ),
 
-              // Action Buttons
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    // Sign In Button
-                    SignInButton(
-                      onTap: () {
-                        setState(() {
-                          _isSignInOpen = !_isSignInOpen;
-                        });
-                      },
-                    ),
+                  const SizedBox(width: 30), // Butonlar arası boşluk
+                  // Cart Button (ÖZEL WIDGET KULLANILARAK - var olduğunu varsayıyoruz)
+                  CartButton(
+                    // <-- MouseRegion/GestureDetector yerine direkt widget
+                    onTap: () {
+                      // Sepet sayfasına gitme işlemi
+                      print("Cart Tapped!"); // Örnek eylem
+                      // Navigator.pushNamed(context, '/cart');
+                    },
+                    // isSelected: false, // Gerekirse bu parametreyi kullanabilirsiniz
+                  ),
+                ],
+              ), // Sağ Buton Grubu Row Sonu
 
-                    const SizedBox(width: 16),
-
-                    // Favorites Button
-                    FavoriteButton(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/favorites');
-                      },
-                    ),
-
-                    const SizedBox(width: 16),
-
-                    // Cart Button
-                    CartButton(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/cart');
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              const Spacer(), // Kalan tüm boşluğu doldurur
+            ], // Ana Row Çocukları Sonu
           ),
-        ),
-
-        // Sign In Overlay
-        if (_isSignInOpen)
-          SizedBox(
-            height: MediaQuery.of(context).size.height - 200,
-            width: MediaQuery.of(context).size.width,
-            child: Stack(
-              children: [
-                SignInOverlay(
-                  isOpen: _isSignInOpen,
-                  onClose: () {
-                    setState(() {
-                      _isSignInOpen = false;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-      ],
+        ], // Ana Column Çocukları Sonu
+      ),
     );
   }
 }
+
+// --- ÖNEMLİ ---
+// CartButton.dart dosyasının da FavoriteButton.dart'a benzer şekilde
+// oluşturulmuş olması gerektiğini varsayıyoruz. Örnek bir CartButton yapısı:
+/*
+import 'package:flutter/material.dart';
+// Gerekli ikonları import et
+// import 'package:project/components/icons/cart_icon.dart';
+// import 'package:project/components/icons/cart_hover_icon.dart';
+
+class CartButton extends StatefulWidget {
+  final VoidCallback? onTap;
+  final bool isSelected;
+
+  const CartButton({super.key, this.onTap, this.isSelected = false});
+
+  @override
+  State<CartButton> createState() => _CartButtonState();
+}
+
+class _CartButtonState extends State<CartButton> {
+  bool _isHovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    // FavoriteButton'a benzer bir yapı kurun
+    // Farklı renkler, ikonlar ve metin kullanın
+    return InkWell(
+      onTap: widget.onTap,
+      onHover: (hovering) {
+        setState(() {
+          _isHovering = hovering;
+        });
+      },
+      borderRadius: BorderRadius.circular(12), // Köşe yuvarlaklığı
+      child: Container(
+        width: 162, // Genişlik (FavoriteButton ile aynı veya farklı olabilir)
+        height: 58, // Yükseklik (FavoriteButton ile aynı veya farklı olabilir)
+        decoration: BoxDecoration(
+          color: _isHovering ? Colors.grey[400] : Colors.grey[300], // Örnek renkler
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // İkonlar (kendi ikonlarınızı kullanın)
+            // _isHovering ? CartHoverIcon(...) : CartIcon(...),
+            Icon(Icons.shopping_cart, color: _isHovering ? Colors.blue : Colors.black), // Örnek ikon
+            const SizedBox(width: 8),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: TextStyle(
+                fontSize: _isHovering ? 26 : 20,
+                color: _isHovering ? Colors.blue : Colors.black, // Örnek renkler
+                fontWeight: FontWeight.w500,
+              ),
+              child: const Text("My Cart"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+*/
