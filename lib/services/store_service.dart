@@ -5,7 +5,14 @@ class StoreService {
   final ApiService _apiService = ApiService();
   final String _endpoint = '/Stores';
 
+  @override
+  String toString() {
+    return 'StoreService(endpoint: $_endpoint)';
+  }
+
   Future<List<Store>> getStores() async {
+    print("StoreService - getStores çağrılıyor");
+    print("Endpoint: $_endpoint");
     try {
       final data = await _apiService.get(_endpoint);
       if (data is List) {

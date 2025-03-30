@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 class SignInOverlay extends StatelessWidget {
   final bool isOpen;
   final VoidCallback onClose;
+  final LayerLink layerLink; // CompositedTransformFollower için LayerLink
 
-  const SignInOverlay({Key? key, required this.isOpen, required this.onClose})
-    : super(key: key);
+  const SignInOverlay({
+    Key? key,
+    required this.isOpen,
+    required this.onClose,
+    required this.layerLink, // Yeni gerekli parametre
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,19 +34,21 @@ class SignInOverlay extends StatelessWidget {
               ),
             ),
 
-            // Menü içeriği - konumu tam olarak belirlendi
-            Positioned(
-              top: 60, // Header'ın altında olacak şekilde
-              right: 140, // Sağ tarafta Sign In butonunun altında
+            // CompositedTransformFollower kullanarak menüyü SignInButton'a hizalama
+            CompositedTransformFollower(
+              link: layerLink, // Header'dan gelen LayerLink
+              targetAnchor:
+                  Alignment.bottomLeft, // Hedef (buton) alt sol köşesi
+              followerAnchor:
+                  Alignment.topLeft, // Takipçi (menü) üst sol köşesi
+              offset: const Offset(0, 10), // Butonun 10px altına konumlandır
               child: Stack(
                 clipBehavior: Clip.none,
-                // Bu Stack'in boyutu içindeki içerikle sınırlı olacak
-                fit: StackFit.passthrough,
                 children: [
                   // Üçgen işaretçi
                   Positioned(
                     top: -10,
-                    right: 50,
+                    left: 30, // Üçgeni menünün sol tarafına yerleştir
                     child: Transform.rotate(
                       angle: 0.8,
                       child: Container(

@@ -53,21 +53,19 @@ class ApiService {
       };
     }
 
-    // Log seviyesini ayarlama - sadece gerekli loglar görünecek
+    // Log seviyesini ayarlama - hiçbir log gösterme, sadece hataları göster
     _dio.interceptors.add(
       LogInterceptor(
-        request: false,
-        requestHeader: false,
-        requestBody: false,
-        responseHeader: false,
-        responseBody: false,
-        error: true,
+        request: false, // İstekleri loglama
+        requestHeader: false, // İstek başlıklarını loglama
+        requestBody: false, // İstek gövdesini loglama
+        responseHeader: false, // Yanıt başlıklarını loglama
+        responseBody: false, // YANIT GÖVDESİNİ LOGLAMA - KAPATTIK
+        error: true, // Sadece hataları göster
         logPrint: (object) {
-          // Hata durumunda log yazdırma
-          if (object.toString().contains('Error')) {
-            if (kDebugMode) {
-              print(object);
-            }
+          // Sadece hata durumlarında log yazdır
+          if (object.toString().contains('Error') && kDebugMode) {
+            print(object);
           }
         },
       ),
@@ -77,10 +75,16 @@ class ApiService {
   // HTTP istekleri için yardımcı metotlar
   Future<dynamic> get(String endpoint) async {
     try {
-      if (kDebugMode) {
+      // Debug çıktılarını kaldır veya azalt
+      if (kDebugMode && endpoint.contains('debug_mode')) {
         print('API ÇAĞRISI: GET $endpoint');
       }
-      final response = await _dio.get(endpoint);
+
+      // Endpoint'in / ile başladığından emin ol
+      String sanitizedEndpoint =
+          endpoint.startsWith('/') ? endpoint : '/$endpoint';
+
+      final response = await _dio.get(sanitizedEndpoint);
 
       if (response.statusCode == 200) {
         // API yanıt formatına göre veriyi döndürüyoruz
@@ -108,7 +112,9 @@ class ApiService {
       }
 
       if (kDebugMode && response.statusCode != 200) {
-        print('API HATA: GET $endpoint - Status: ${response.statusCode}');
+        print(
+          'API HATA: GET $sanitizedEndpoint - Status: ${response.statusCode}',
+        );
       }
 
       // Başarısız yanıt için boş liste döndürüyoruz
@@ -121,17 +127,20 @@ class ApiService {
 
   Future<dynamic> getById(String endpoint, int id) async {
     try {
-      if (kDebugMode) {
-        print('API ÇAĞRISI: GET $endpoint/$id');
-      }
-      final response = await _dio.get('$endpoint/$id');
+      // Endpoint'in / ile başladığından emin ol
+      String sanitizedEndpoint =
+          endpoint.startsWith('/') ? endpoint : '/$endpoint';
+
+      final response = await _dio.get('$sanitizedEndpoint/$id');
 
       if (response.statusCode == 200) {
         return response.data;
       }
 
       if (kDebugMode && response.statusCode != 200) {
-        print('API HATA: GET $endpoint/$id - Status: ${response.statusCode}');
+        print(
+          'API HATA: GET $sanitizedEndpoint/$id - Status: ${response.statusCode}',
+        );
       }
 
       return null;
@@ -143,17 +152,20 @@ class ApiService {
 
   Future<dynamic> post(String endpoint, dynamic data) async {
     try {
-      if (kDebugMode) {
-        print('API ÇAĞRISI: POST $endpoint');
-      }
-      final response = await _dio.post(endpoint, data: data);
+      // Endpoint'in / ile başladığından emin ol
+      String sanitizedEndpoint =
+          endpoint.startsWith('/') ? endpoint : '/$endpoint';
+
+      final response = await _dio.post(sanitizedEndpoint, data: data);
 
       if (response.statusCode == 200) {
         return response.data;
       }
 
       if (kDebugMode && response.statusCode != 200) {
-        print('API HATA: POST $endpoint - Status: ${response.statusCode}');
+        print(
+          'API HATA: POST $sanitizedEndpoint - Status: ${response.statusCode}',
+        );
       }
 
       return null;
@@ -165,17 +177,20 @@ class ApiService {
 
   Future<dynamic> put(String endpoint, int id, dynamic data) async {
     try {
-      if (kDebugMode) {
-        print('API ÇAĞRISI: PUT $endpoint/$id');
-      }
-      final response = await _dio.put('$endpoint/$id', data: data);
+      // Endpoint'in / ile başladığından emin ol
+      String sanitizedEndpoint =
+          endpoint.startsWith('/') ? endpoint : '/$endpoint';
+
+      final response = await _dio.put('$sanitizedEndpoint/$id', data: data);
 
       if (response.statusCode == 200) {
         return response.data;
       }
 
       if (kDebugMode && response.statusCode != 200) {
-        print('API HATA: PUT $endpoint/$id - Status: ${response.statusCode}');
+        print(
+          'API HATA: PUT $sanitizedEndpoint/$id - Status: ${response.statusCode}',
+        );
       }
 
       return null;
@@ -187,10 +202,13 @@ class ApiService {
 
   Future<dynamic> delete(String endpoint, int id) async {
     try {
-      if (kDebugMode) {
-        print('API ÇAĞRISI: DELETE $endpoint/SoftDelete_Status$id');
-      }
-      final response = await _dio.delete('$endpoint/SoftDelete_Status$id');
+      // Endpoint'in / ile başladığından emin ol
+      String sanitizedEndpoint =
+          endpoint.startsWith('/') ? endpoint : '/$endpoint';
+
+      final response = await _dio.delete(
+        '$sanitizedEndpoint/SoftDelete_Status$id',
+      );
 
       if (response.statusCode == 200) {
         return response.data;
@@ -198,7 +216,7 @@ class ApiService {
 
       if (kDebugMode && response.statusCode != 200) {
         print(
-          'API HATA: DELETE $endpoint/SoftDelete_Status$id - Status: ${response.statusCode}',
+          'API HATA: DELETE $sanitizedEndpoint/SoftDelete_Status$id - Status: ${response.statusCode}',
         );
       }
 

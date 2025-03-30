@@ -21,6 +21,9 @@ class _HeaderState extends State<Header> {
   bool _isHoveringFavorites = false;
   bool _isHoveringCart = false;
 
+  // SignInButton ve Overlay arasındaki bağlantı için LayerLink
+  final LayerLink _layerLink = LayerLink();
+
   // OverlayEntry oluşturmak için bir değişken
   OverlayEntry? _overlayEntry;
 
@@ -41,6 +44,7 @@ class _HeaderState extends State<Header> {
       builder:
           (context) => SignInOverlay(
             isOpen: true,
+            layerLink: _layerLink, // LayerLink'i SignInOverlay'e geçir
             onClose: () {
               _removeOverlay();
               setState(() {
@@ -162,8 +166,11 @@ class _HeaderState extends State<Header> {
               Row(
                 mainAxisSize: MainAxisSize.min, // Butonlar kadar yer kapla
                 children: [
-                  // Sign In Button (Değişiklik Yok)
-                  SignInButton(onTap: _showSignInOverlay),
+                  // SignInButton - CompositedTransformTarget ile sarmak
+                  CompositedTransformTarget(
+                    link: _layerLink, // LayerLink'i burada kullan
+                    child: SignInButton(onTap: _showSignInOverlay),
+                  ),
 
                   const SizedBox(width: 30), // Butonlar arası boşluk
                   // Favorites Button (ÖZEL WIDGET KULLANILARAK)

@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:project/widgets/footer.dart';
+import 'package:project/widgets/footer.dart'; // Footer'ı kullanıyorsanız kalsın
 import 'package:project/widgets/header.dart';
-import 'package:project/widgets/navigation_bar.dart' as app;
-import '../services/api_service.dart';
+import 'package:project/widgets/navigation_bar.dart'
+    as app; // Alias ekledik çakışmayı önlemek için
+
+// Servisleri import et
+import '../services/category_service.dart';
+import '../services/product_service.dart';
+import '../services/store_service.dart';
+
+// Modelleri import et
 import '../models/category.dart';
 import '../models/product.dart';
 import '../models/store.dart';
+
+// ApiService importuna artık burada gerek yok
+// import '../services/api_service.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -15,7 +25,10 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
-  final ApiService _apiService = ApiService();
+  // ApiService yerine özel servisleri kullan
+  final CategoryService _categoryService = CategoryService();
+  final ProductService _productService = ProductService();
+  final StoreService _storeService = StoreService();
 
   List<Category> _categories = [];
   List<Product> _products = [];
@@ -29,112 +42,106 @@ class _LandingPageState extends State<LandingPage> {
     _loadAllData();
   }
 
+  // Veri yükleme işlemini servis katmanı üzerinden yapan düzeltilmiş metod
   Future<void> _loadAllData() async {
+    print(
+      ">>> LandingPage: _loadAllData BAŞLADI. _isLoading: $_isLoading",
+    ); // Y `LandingPage`'de yaptığımız gibi **servis katmanını kullanacak şekilde düzeltildi mi?** Eğer `stores_megamenu.dart` hala `_apiService.get('/Store')` gibi doğrudan çağrılar yapıyorsa, gördüğün hatalı logların kaynağı orENİ PRINT 1
     setState(() {
       _isLoading = true;
       _errorMessage = '';
     });
 
     try {
-      // Tüm verileri aynı anda yüklüyoruz
-      await Future.wait([_fetchCategories(), _fetchProducts(), _fetchStores()]);
+      print(
+        ">>> LandingPage: Servis nesneleri kontrol ediliyor:",
+      ); // YENİ PRINT 2
+      print(
+        ">>> LandingPage: _categoryService hash: ${_categoryService.hashCode}",
+      );
+      print(
+        ">>> LandingPage: _productService hash: ${_productService.hashCode}",
+      );
+      print(">>> LandingPage: _storeService hash: ${_storeService.hashCode}");
+      print(">>> LandingPage: Future.wait çağrılacak..."); //asıdır.
+      final results = await Future.wait([
+        _categoryService.getCategories(), // Servis metodunu çağır
+        _productService.getProducts(), // Servis metodunu çağır
+        _storeService.getStores(), // Servis metodunu çağır
+      ]);
+
+      // Sonuçları işle ve setState çağır
+      setState(() {
+        // Gelen verinin tipini kontrol etmek daha güvenli olabilir
+        if (results[0] is List<Category>) {
+          _categories = results[0] as List<Category>;
+        }
+        if (results[1] is List<Product>) {
+          _products = results[1] as List<Product>;
+        }
+        if (results[2] is List<Store>) {
+          _stores = results[2] as List<Store>;
+        }
+        _isLoading = false; // Yükleme bitti
+      });
 
       // Sadece geliştirme aşamasında, yüklenen verilerin özet bilgisini yazdır
-      debugPrint('Veri yükleme tamamlandı:');
+      debugPrint('LandingPage - Veri yükleme tamamlandı:');
       debugPrint('Kategoriler: ${_categories.length} adet');
       debugPrint('Ürünler: ${_products.length} adet');
       debugPrint('Mağazalar: ${_stores.length} adet');
-
-      setState(() {
-        _isLoading = false;
-      });
     } catch (e) {
       setState(() {
         _errorMessage = 'Veriler yüklenirken hata oluştu: $e';
         _isLoading = false;
       });
-      debugPrint(_errorMessage);
-    }
-  }
-
-  Future<void> _fetchCategories() async {
-    try {
-      final data = await _apiService.get('/Category');
-      final List<Category> loadedCategories = [];
-
-      for (var item in data) {
-        loadedCategories.add(Category.fromJson(item));
-      }
-
-      setState(() {
-        _categories = loadedCategories;
-      });
-    } catch (e) {
-      debugPrint('Kategori verisi yüklenirken hata: $e');
-      rethrow; // Ana yükleme işlemindeki hata yakalama için hatayı yeniden fırlat
-    }
-  }
-
-  Future<void> _fetchProducts() async {
-    try {
-      final data = await _apiService.get('/Product');
-      final List<Product> loadedProducts = [];
-
-      for (var item in data) {
-        loadedProducts.add(Product.fromJson(item));
-      }
-
-      setState(() {
-        _products = loadedProducts;
-      });
-    } catch (e) {
-      debugPrint('Ürün verisi yüklenirken hata: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> _fetchStores() async {
-    try {
-      final data = await _apiService.get('/Store');
-      final List<Store> loadedStores = [];
-
-      for (var item in data) {
-        loadedStores.add(Store.fromJson(item));
-      }
-
-      setState(() {
-        _stores = loadedStores;
-      });
-    } catch (e) {
-      debugPrint('Mağaza verisi yüklenirken hata: $e');
-      rethrow;
+      debugPrint('LandingPage - Hata: $_errorMessage');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Scaffold ve SafeArea temel yapı
     return Scaffold(
+      // appBar: AppBar(title: Text("Landing Page Test")), // Gerekirse AppBar eklenebilir
       body: SafeArea(
         child: Stack(
+          // Header ve NavigationBar'ı üste koymak için Stack
           children: [
-            // Ana içerik
-            _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _errorMessage.isNotEmpty
-                ? _buildErrorView()
-                : _buildMainContent(),
+            // Ana içerik (Yükleniyor, Hata veya İçerik)
+            // İçeriğin Header ve NavBar arkasında kalmaması için Padding eklenebilir
+            Padding(
+              // Header ve NavigationBar yüksekliğine göre padding ayarlayın
+              padding: const EdgeInsets.only(
+                top: 140,
+              ), // Örnek değer, ayarlamanız gerekebilir
+              child:
+                  _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _errorMessage.isNotEmpty
+                      ? _buildErrorView()
+                      : _buildMainContent(), // build metodu içeriği
+            ),
 
-            // Header
+            // Header'ı en üste yerleştir
             const Positioned(top: 0, left: 0, right: 0, child: Header()),
 
-            // Navigation Bar
-            const app.NavigationBar(),
+            // NavigationBar'ı Header'ın altına yerleştir
+            const Positioned(
+              // Header'ın yüksekliğine göre top değerini ayarlayın
+              top: 70, // Örnek değer, Header yüksekliğine göre ayarlayın
+              left: 0,
+              right: 0,
+              // app.NavigationBar olarak alias ile kullanıyoruz
+              child: app.NavigationBar(),
+            ),
           ],
         ),
       ),
     );
   }
 
+  // Hata durumunda gösterilecek widget
   Widget _buildErrorView() {
     return Center(
       child: Padding(
@@ -149,7 +156,7 @@ class _LandingPageState extends State<LandingPage> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _loadAllData,
+              onPressed: _loadAllData, // Tekrar deneme butonu
               child: const Text('Tekrar Dene'),
             ),
           ],
@@ -158,31 +165,35 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  // Ana sayfa içeriğini oluşturan widget
   Widget _buildMainContent() {
+    // SingleChildScrollView içeriğin kaydırılabilmesini sağlar
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(top: 120, bottom: 24),
+      // Padding'i Stack seviyesine taşıdığımız için buradaki top padding kaldırıldı.
+      // padding: const EdgeInsets.only(top: 120, bottom: 24), // Kaldırıldı
+      padding: const EdgeInsets.only(bottom: 24), // Sadece alt padding kaldı
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Kategori butonları
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildCategoryButtons(),
+            child: _buildCategoryButtons(), // Kategori butonlarını oluşturur
           ),
 
           const SizedBox(height: 24),
 
-          // Featured Products
-          _buildFeaturedProducts(),
+          // Öne Çıkan Ürünler
+          _buildFeaturedProducts(), // Öne çıkan ürünler bölümünü oluşturur
 
           const SizedBox(height: 24),
 
-          // Best Seller
-          _buildBestSeller(),
+          // Çok Satanlar
+          _buildBestSeller(), // Çok satanlar bölümünü oluşturur
 
           const SizedBox(height: 24),
 
-          // Footer
+          // Footer (İsteğe bağlı, ayrı bir Footer widget'ı kullanılabilir)
           Container(
             margin: const EdgeInsets.only(top: 24),
             padding: const EdgeInsets.symmetric(vertical: 24),
@@ -218,12 +229,15 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  // Kategori butonlarını oluşturan yardımcı metod (Statik içerik)
   Widget _buildCategoryButtons() {
+    // Yatayda kaydırılabilir liste
     return SizedBox(
       height: 80,
       child: ListView(
-        scrollDirection: Axis.horizontal,
+        scrollDirection: Axis.horizontal, // Yatay kaydırma
         children: [
+          // Örnek statik butonlar, _categories listesinden dinamik olarak oluşturulabilir
           _buildCategoryButton('Computer/Tablet', Icons.computer),
           _buildCategoryButton('Printers & Projectors', Icons.print),
           _buildCategoryButton('Telephone', Icons.phone_android),
@@ -237,6 +251,7 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  // Tek bir kategori butonu oluşturan yardımcı metod
   Widget _buildCategoryButton(String title, IconData icon) {
     return Container(
       width: 130,
@@ -269,13 +284,18 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  // Öne çıkan ürünler bölümünü oluşturan yardımcı metod (Statik içerik)
   Widget _buildFeaturedProducts() {
+    // Sabit yükseklik ve renkte bir container
     return Container(
       height: 200,
       width: double.infinity,
-      decoration: BoxDecoration(color: const Color(0xFFB4D4FF)),
+      decoration: BoxDecoration(
+        color: const Color(0xFFB4D4FF),
+      ), // Arkaplan rengi
       child: Stack(
         children: [
+          // Ortadaki başlık
           Center(
             child: Text(
               'Featured Products',
@@ -286,6 +306,7 @@ class _LandingPageState extends State<LandingPage> {
               ),
             ),
           ),
+          // Sol ok butonu
           Positioned(
             left: 16,
             top: 0,
@@ -293,10 +314,13 @@ class _LandingPageState extends State<LandingPage> {
             child: Center(
               child: IconButton(
                 icon: const Icon(Icons.arrow_back_ios),
-                onPressed: () {},
+                onPressed: () {
+                  /* Slider için önceki öğeye gitme */
+                },
               ),
             ),
           ),
+          // Sağ ok butonu
           Positioned(
             right: 16,
             top: 0,
@@ -304,7 +328,9 @@ class _LandingPageState extends State<LandingPage> {
             child: Center(
               child: IconButton(
                 icon: const Icon(Icons.arrow_forward_ios),
-                onPressed: () {},
+                onPressed: () {
+                  /* Slider için sonraki öğeye gitme */
+                },
               ),
             ),
           ),
@@ -313,28 +339,35 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  // Çok satanlar bölümünü oluşturan yardımcı metod (Statik içerik)
   Widget _buildBestSeller() {
+    // Dikeyde genişleyen sütun
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Bölüm başlığı
           const Text(
             'BEST SELLER',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
+          // Ürünleri gösteren Grid yapısı
           GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true, // İçeriğe göre boyutlan
+            physics:
+                const NeverScrollableScrollPhysics(), // Kaydırmayı devre dışı bırak
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.75,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
+              crossAxisCount: 2, // Yan yana 2 ürün
+              childAspectRatio: 0.75, // En/boy oranı
+              crossAxisSpacing: 16, // Yatay boşluk
+              mainAxisSpacing: 16, // Dikey boşluk
             ),
-            itemCount: 2, // Sadece 2 ürün gösteriyoruz
+            itemCount:
+                2, // Statik olarak 2 ürün gösteriliyor, _products ile dinamik olabilir
             itemBuilder: (context, index) {
+              // Tek bir ürün kartı
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -350,7 +383,7 @@ class _LandingPageState extends State<LandingPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Ürün resmi
+                    // Ürün resmi alanı
                     Container(
                       height: 140,
                       decoration: BoxDecoration(
@@ -361,6 +394,7 @@ class _LandingPageState extends State<LandingPage> {
                         ),
                       ),
                       child: Center(
+                        // Resim yerine ikon
                         child: Icon(
                           Icons.image,
                           size: 48,
@@ -368,14 +402,14 @@ class _LandingPageState extends State<LandingPage> {
                         ),
                       ),
                     ),
-
-                    // Ürün bilgileri
+                    // Ürün bilgileri alanı
                     Padding(
                       padding: const EdgeInsets.all(12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
+                            // Ürün adı
                             'Örnek Ürün ${index + 1}',
                             style: const TextStyle(
                               fontSize: 16,
@@ -386,6 +420,7 @@ class _LandingPageState extends State<LandingPage> {
                           ),
                           const SizedBox(height: 4),
                           Row(
+                            // Yıldız rating
                             children: List.generate(
                               5,
                               (i) => Icon(
@@ -397,6 +432,7 @@ class _LandingPageState extends State<LandingPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
+                            // Fiyat
                             '₺${299 + index * 100}.99',
                             style: TextStyle(
                               fontSize: 18,
@@ -417,6 +453,7 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  // Bu metod şu anda build metodu içinde kullanılmıyor gibi görünüyor.
   String _getItemName(dynamic item) {
     if (item is Category) {
       return item.name;

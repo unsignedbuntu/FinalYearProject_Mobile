@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../components/icons/index.dart';
 import '../../widgets/landing_page.dart';
 
 class HomePage extends StatefulWidget {

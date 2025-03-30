@@ -5,7 +5,14 @@ class CategoryService {
   final ApiService _apiService = ApiService();
   final String _endpoint = '/Categories';
 
+  @override
+  String toString() {
+    return 'CategoryService(endpoint: $_endpoint)';
+  }
+
   Future<List<Category>> getCategories() async {
+    print("CategoryService - getCategories çağrılıyor");
+    print("Endpoint: $_endpoint");
     try {
       final data = await _apiService.get(_endpoint);
       if (data is List) {

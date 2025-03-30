@@ -5,7 +5,14 @@ class ProductService {
   final ApiService _apiService = ApiService();
   final String _endpoint = '/Products';
 
+  @override
+  String toString() {
+    return 'ProductService(endpoint: $_endpoint)';
+  }
+
   Future<List<Product>> getProducts() async {
+    print("ProductService - getProducts çağrılıyor");
+    print("Endpoint: $_endpoint");
     try {
       final data = await _apiService.get(_endpoint);
       if (data is List) {
@@ -28,6 +35,19 @@ class ProductService {
     } catch (e) {
       print('Error fetching product by id: $e');
       return null;
+    }
+  }
+
+  Future<List<Product>> getProductsByCategory(int categoryId) async {
+    try {
+      final data = await _apiService.get('$_endpoint/category/$categoryId');
+      if (data is List) {
+        return data.map((json) => Product.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching products by category: $e');
+      return [];
     }
   }
 
