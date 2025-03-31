@@ -187,9 +187,9 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
         width: MediaQuery.of(context).size.width - 100,
         margin: const EdgeInsets.only(top: 10),
         constraints: const BoxConstraints(
-          maxWidth: 1200,
+          maxWidth: 1700,
           minHeight: 500,
-          maxHeight: 600,
+          maxHeight: 700,
         ),
         padding: const EdgeInsets.all(24),
         child:

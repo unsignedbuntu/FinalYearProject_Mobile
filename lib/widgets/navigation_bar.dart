@@ -126,11 +126,24 @@ class _NavigationBarState extends State<NavigationBar> {
                       link: _storesLayerLink,
                       targetAnchor: Alignment.bottomCenter,
                       followerAnchor: Alignment.topCenter,
-                      offset: const Offset(0, 4), // Buton ile menü arası boşluk
+                      offset: const Offset(200, 5),
                       child: GestureDetector(
-                        onTap: () {}, // Menü içi tıklama kapatmasın
-                        child: const StoresMegaMenu(
-                          key: ValueKey('storesMegaMenu'),
+                        onTap: () {},
+                        child: MouseRegion(
+                          onEnter: (_) {
+                            _storesHoverTimer?.cancel();
+                            if (mounted) {
+                              setState(() {
+                                _hoveredIndex = 0;
+                              });
+                            }
+                          },
+                          onExit: (_) {
+                            _hideStoresMegaMenuWithDelay();
+                          },
+                          child: const StoresMegaMenu(
+                            key: ValueKey('storesMegaMenu'),
+                          ),
                         ),
                       ),
                     ),

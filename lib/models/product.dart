@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class Product {
   final int id;
   final String name;
@@ -32,18 +34,45 @@ class Product {
   int? get categoryID => categoryId;
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    // Gelen JSON'ı yazdırma (Hata ayıklama için)
+    if (kDebugMode) {
+      //  print("--- Product JSON ---: $json");
+    }
+
+    // JSON alan adlarını React koduna göre güncelle (productID, productName)
+    final int productId = json['productID'] as int? ?? json['id'] as int? ?? -1;
+    if (productId == -1) {
+      print(
+        "HATA: Product.fromJson - 'productID' veya 'id' alanı null veya geçersiz. JSON: $json",
+      );
+    }
+
+    final String productName =
+        json['productName'] as String? ??
+        json['name'] as String? ??
+        'İsimsiz Ürün';
+
+    // price null kontrolü ve varsayılan değer (0.0)
+    final double productPrice = (json['price'] as num?)?.toDouble() ?? 0.0;
+
     return Product(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      price: json['price'].toDouble(),
-      imageUrl: json['imageUrl'],
-      isActive: json['isActive'] ?? true,
-      createdAt: DateTime.parse(json['createdAt']),
+      id: productId,
+      name: productName,
+      description: json['description'] as String?,
+      price: productPrice,
+      imageUrl: json['imageUrl'] as String?,
+      isActive: json['isActive'] as bool? ?? false,
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.parse(json['createdAt'] as String)
+              : DateTime.now(),
       updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      storeId: json['storeId'],
-      categoryId: json['categoryId'],
+          json['updatedAt'] != null
+              ? DateTime.parse(json['updatedAt'] as String)
+              : null,
+      // storeId ve categoryId Flutter modelinde nullable, API'den gelen `storeID` ve `categoryID` (varsa) kullanılabilir.
+      storeId: json['storeID'] as int? ?? json['storeId'] as int?,
+      categoryId: json['categoryID'] as int? ?? json['categoryId'] as int?,
     );
   }
 
