@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:project/models/cart_models.dart'; // Adjust import
+import 'package:project/components/icons/bin.dart';
+import 'package:project/components/icons/arrow_right.dart';
 
 // Define colors and fonts
 const Color itemBg = Color(0xFFD9D9D9);
@@ -35,128 +36,154 @@ class ProductCartItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Stack(
-        // Using Stack for overlaying elements like in React
         children: [
           // Supplier Header
           Positioned(
-            left: 24, // px-6 approx
-            right: 24,
-            top: 12, // top-3 approx
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      // Supplier info
-                      children: [
-                        const Text("Supplier: ",
+            left: 0,
+            top: 3,
+            width: 800,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            "Supplier: ",
                             style: TextStyle(
-                                fontFamily: ralewayFont, fontSize: 16)),
-                        Text(product.supplier,
+                              fontSize: 16,
+                              fontFamily: ralewayFont,
+                            ),
+                          ),
+                          Text(
+                            product.supplier,
                             style: const TextStyle(
-                                fontFamily: ralewayFont,
-                                fontSize: 16,
-                                color: supplierColor)),
-                        const SizedBox(width: 4),
-                        SvgPicture.asset('assets/icons/arrow_right.svg',
-                            width: 16, height: 16),
-                      ],
-                    ),
-                    if (isSelected) // Show free shipping only if selected
-                      const Text(
-                        "Free shipping",
-                        style: TextStyle(
-                            fontFamily: ralewayFont,
-                            fontSize: 20,
-                            color: freeShippingColor),
+                              fontSize: 16,
+                              fontFamily: ralewayFont,
+                              color: supplierColor,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          ArrowRightIcon(width: 16, height: 16),
+                        ],
                       ),
-                  ],
-                ),
-                const SizedBox(height: 8), // mt-2
-                const Divider(color: dividerColor, height: 0.5, thickness: 0.5),
-              ],
+                      if (isSelected)
+                        const Text(
+                          "Free shipping",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: ralewayFont,
+                            color: freeShippingColor,
+                          ),
+                        ),
+                    ],
+                  ),
+                  const Divider(color: dividerColor, thickness: 0.5),
+                ],
+              ),
             ),
           ),
 
-          // Main Content (Checkbox, Image, Name) - Positioned below header
+          // Checkbox
           Positioned(
-            left: 20,
-            top:
-                55, // Estimate top position below header/divider (top-[45px] was from container top)
-            child: Row(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // Align items to top
-              children: [
-                // Checkbox needs padding/sizing adjustment
-                SizedBox(
-                  width: 40, // Space for checkbox
-                  height: 100, // Match image height roughly
-                  child: Checkbox(
-                    value: isSelected,
-                    onChanged: onCheckboxChanged,
-                    materialTapTargetSize:
-                        MaterialTapTargetSize.shrinkWrap, // Reduce tap area
-                    visualDensity: VisualDensity.compact,
-                    // Add custom styling if needed
-                  ),
+            left: 26,
+            top: 81,
+            child: SizedBox(
+              width: 32,
+              height: 32,
+              child: Checkbox(
+                value: isSelected,
+                onChanged: onCheckboxChanged,
+                activeColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                // Image
-                ClipRRect(
-                  // For rounded corners on image
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.asset(
-                    // Or Image.network if URL
-                    product.image,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.image_not_supported,
-                        size: 50), // Placeholder on error
-                  ),
-                ),
-                const SizedBox(width: 16), // ml-4
-                // Product Name (Constrained width)
-                SizedBox(
-                  width: 350, // max-w-[400px] approx, adjusted for space
-                  child: Text(
-                    product.name,
-                    style: const TextStyle(
-                      fontFamily: ralewayFont,
-                      fontSize: 14,
-                      // height: 1.2, // leading-tight
-                    ),
-                    maxLines: 4, // Allow multiple lines
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
 
-          // Controls (Quantity, Price, Remove) - Positioned right
+          // Product Image
+          Positioned(left: 70, top: 45, child: _buildProductImage()),
+
+          // Product Name
           Positioned(
-            right: 24, // right-6
-            top: 65, // top-[45px] was from container top, adjust vertically
+            left: 180,
+            top: 67,
+            width: 400,
+            child: Text(
+              product.name,
+              style: const TextStyle(fontSize: 14, fontFamily: ralewayFont),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+
+          // Controls (Quantity and Price)
+          Positioned(
+            right: 24,
+            top: 67,
             child: Row(
               children: [
-                // Quantity Buttons & Remove
-                _buildQuantityControls(),
-                const SizedBox(width: 16), // gap-4 approx
-                // Price
+                if (product.quantity == 1)
+                  Row(
+                    children: [
+                      _buildQuantityButton(
+                        onPressed: () => onQuantityChanged(1),
+                        icon: Icons.add,
+                      ),
+                      const SizedBox(width: 12),
+                      InkWell(
+                        onTap: onRemove,
+                        child: BinIcon(width: 24, height: 24),
+                      ),
+                    ],
+                  )
+                else
+                  Row(
+                    children: [
+                      _buildQuantityButton(
+                        onPressed: () => onQuantityChanged(-1),
+                        icon: Icons.remove,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          "${product.quantity}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontFamily: ralewayFont,
+                          ),
+                        ),
+                      ),
+                      _buildQuantityButton(
+                        onPressed: () => onQuantityChanged(1),
+                        icon: Icons.add,
+                      ),
+                      const SizedBox(width: 12),
+                      InkWell(
+                        onTap: onRemove,
+                        child: BinIcon(width: 24, height: 24),
+                      ),
+                    ],
+                  ),
+                const SizedBox(width: 16),
                 Container(
                   width: 95,
                   height: 30,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(16.0),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Center(
-                    child: Text(
-                      "${product.price.toStringAsFixed(2)} TL",
-                      style: const TextStyle(
-                          fontFamily: ralewayFont, fontSize: 16),
+                  alignment: Alignment.center,
+                  child: Text(
+                    "${product.price.toStringAsFixed(2)} TL",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontFamily: ralewayFont,
                     ),
                   ),
                 ),
@@ -168,66 +195,87 @@ class ProductCartItem extends StatelessWidget {
     );
   }
 
-  // Helper for quantity controls
-  Widget _buildQuantityControls() {
-    return Row(
-      children: [
-        // Decrease Button
-        SizedBox(
-          width: 30,
-          height: 30,
-          child: Material(
-            // For InkWell effect
-            color: Colors.white,
-            shape: const CircleBorder(),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: () => onQuantityChanged(-1),
-              child: const Center(child: Text("-")),
+  Widget _buildQuantityButton({
+    required VoidCallback onPressed,
+    required IconData icon,
+  }) {
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 16),
+      ),
+    );
+  }
+
+  Widget _buildProductImage() {
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: _buildImageWithFallback(),
+      ),
+    );
+  }
+
+  Widget _buildImageWithFallback() {
+    // Önce network image olup olmadığını kontrol et
+    if (product.image.startsWith('http')) {
+      return Image.network(
+        product.image,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildFallbackImage();
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value:
+                  loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
             ),
-          ),
+          );
+        },
+      );
+    } else {
+      // Lokal asset
+      try {
+        return Image.asset(
+          product.image,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildFallbackImage();
+          },
+        );
+      } catch (e) {
+        return _buildFallbackImage();
+      }
+    }
+  }
+
+  Widget _buildFallbackImage() {
+    return Container(
+      color: Colors.grey[200],
+      child: const Center(
+        child: Icon(
+          Icons.image_not_supported_outlined,
+          size: 40,
+          color: Colors.grey,
         ),
-        // Quantity or Bin Icon
-        Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 8.0), // Spacing around quantity
-          child: (product.quantity > 1)
-              ? Text(product.quantity.toString())
-              : IconButton(
-                  // Show Bin icon if quantity is 1
-                  icon: SvgPicture.asset('assets/icons/bin.svg',
-                      width: 24, height: 24),
-                  onPressed: onRemove,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(), // Remove default padding
-                  tooltip: "Remove",
-                ),
-        ),
-        // Increase Button
-        SizedBox(
-          width: 30,
-          height: 30,
-          child: Material(
-            color: Colors.white,
-            shape: const CircleBorder(),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: () => onQuantityChanged(1),
-              child: const Center(child: Text("+")),
-            ),
-          ),
-        ),
-        // Always show Bin Icon if quantity > 1 (as per React logic)
-        if (product.quantity > 1)
-          IconButton(
-            icon:
-                SvgPicture.asset('assets/icons/bin.svg', width: 24, height: 24),
-            onPressed: onRemove,
-            padding: const EdgeInsets.only(left: 8.0), // ml-2
-            constraints: const BoxConstraints(),
-            tooltip: "Remove",
-          ),
-      ],
+      ),
     );
   }
 }
