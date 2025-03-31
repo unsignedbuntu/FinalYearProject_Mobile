@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/components/icons/cart_icon.dart';
 import 'package:project/components/icons/cart_hover.dart';
+import 'package:project/screens/cart/cart_page.dart';
 
 class CartButton extends StatefulWidget {
   final VoidCallback? onTap;
@@ -18,7 +19,11 @@ class _CartButtonState extends State<CartButton> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.onTap,
+      onTap:
+          widget.onTap ??
+          () {
+            Navigator.pushNamed(context, CartPage.routeName);
+          },
       onHover: (hovering) {
         setState(() {
           _isHovering = hovering;

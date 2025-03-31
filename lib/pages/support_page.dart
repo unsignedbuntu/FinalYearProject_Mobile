@@ -11,14 +11,14 @@ class SupportPage extends StatefulWidget {
 }
 
 class _SupportPageState extends State<SupportPage> {
-  // Açık olan öğeleri takip etmek için state (React'taki activeItems gibi)
+  // Açık olan öğeleri takip etmek için state
   final Map<String, int> _activeItems = {
     'faq': -1,
     'service': -1,
     'resource': -1,
   };
 
-  // Öğe tıklama olayını yöneten fonksiyon (React'taki handleClick gibi)
+  // Öğe tıklama olayını yöneten fonksiyon
   void _handleClick(String section, int index) {
     setState(() {
       if (_activeItems[section] == index) {
@@ -32,71 +32,50 @@ class _SupportPageState extends State<SupportPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    // Daha küçük bir breakpoint kullanalım, React kodu md: (768px) kullanıyor
-    final bool isDesktop = screenWidth > 768;
-    const double cardBorderRadius =
-        12.0; // Kartlar için köşe yarıçapı (rounded-lg)
-    const double sectionSpacing = 48.0; // py-12'ye karşılık gelen dikey boşluk
+    final bool isDesktop = screenWidth > 768; // Breakpoint
+    const double cardBorderRadius = 12.0; // Kartlar için köşe yarıçapı
+    const double sectionSpacing = 48.0; // Dikey boşluk
 
     return Scaffold(
-      // AppBar'ı isteğe bağlı olarak kaldırabilir veya özelleştirebilirsin
-      // React kodunda belirgin bir AppBar yok, padding ile üst boşluk verilmiş.
-      // Şimdilik AppBar'ı yorum satırına alalım.
-      /*
-      appBar: AppBar(
-        title: const Text('Support'),
-        elevation: 1,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      */
       body: Container(
-        // Arka plan gradient (React: from-blue-50 to-purple-50)
+        // Arka plan gradient
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter, // veya topLeft
-            end: Alignment.bottomCenter, // veya bottomRight
-            colors: [Color(0xFFEFF6FF), Color(0xFFF5F3FF)], // Yaklaşık renkler
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFEFF6FF), Color(0xFFF5F3FF)],
           ),
         ),
         child: SingleChildScrollView(
-          // Üst padding (React: pt-[160px] - AppBar yoksa bu daha mantıklı)
-          // Eğer AppBar kullanacaksanız bu padding'i azaltın veya kaldırın.
-          padding: const EdgeInsets.only(top: 60.0), // AppBar yok varsayımıyla
+          padding: const EdgeInsets.only(top: 60.0), // Üst boşluk
           child: Center(
-            // İçeriği ortala ve maksimum genişlik ver (React: max-w-7xl mx-auto)
+            // İçeriği ortala ve maksimum genişlik ver
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1280), // 7xl ~ 1280px
+              constraints: const BoxConstraints(maxWidth: 1280), // max-w-7xl
               child: Padding(
-                // Yan boşluklar (React: px-4)
+                // Yan boşluklar
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // --- Hero Section ---
-                    const SizedBox(height: sectionSpacing / 2), // İlk boşluk
+                    const SizedBox(height: sectionSpacing / 2),
                     const Text(
                       'How Can We Help You?',
                       style: TextStyle(
-                        fontSize: 36, // text-4xl
+                        fontSize: 36,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 16), // mb-4
+                    const SizedBox(height: 16),
                     Text(
                       'Our support team is here to assist you with any questions or concerns you may have.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[700], // text-gray-600
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: sectionSpacing), // Alt boşluk
+                    const SizedBox(height: sectionSpacing),
+
                     // --- Quick Help Categories ---
                     _buildQuickHelpSection(isDesktop, cardBorderRadius),
                     const SizedBox(height: sectionSpacing),
@@ -164,18 +143,18 @@ class _SupportPageState extends State<SupportPage> {
   // Tek bir kategori kartını oluşturan widget
   Widget _buildCategoryCard(
     String title,
-    List<dynamic> items, // FAQ, Service veya Resource olabilir
-    String sectionKey, // 'faq', 'service', 'resource'
+    List<dynamic> items,
+    String sectionKey,
     double borderRadius,
   ) {
     return Container(
       padding: const EdgeInsets.all(24), // p-6
       decoration: BoxDecoration(
-        color: Colors.white, // bg-white
-        borderRadius: BorderRadius.circular(borderRadius), // rounded-lg
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08), // shadow-md (yaklaşık)
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -187,28 +166,23 @@ class _SupportPageState extends State<SupportPage> {
           Text(
             title,
             style: const TextStyle(
-              fontSize: 20, // text-xl
-              fontWeight: FontWeight.w600, // font-semibold
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 16), // mb-4
-          // React'taki ul/li yapısı yerine ListView.separated
+          const SizedBox(height: 16),
           ListView.separated(
-            shrinkWrap: true, // İçerik kadar yer kapla
-            physics:
-                const NeverScrollableScrollPhysics(), // Kaydırmayı devre dışı bırak
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
               final bool isActive = _activeItems[sectionKey] == index;
-              // Modele göre başlığı al
               final String itemTitle =
                   item is FaqItem
                       ? item.question
-                      : (item is ServiceItem
-                          ? item.title
-                          : item.title); // ResourceItem da title kullanır
+                      : (item is ServiceItem ? item.title : item.title);
               final String itemContent = item.content;
 
               return Column(
@@ -219,28 +193,24 @@ class _SupportPageState extends State<SupportPage> {
                     child: Text(
                       itemTitle,
                       style: TextStyle(
-                        fontWeight: FontWeight.w500, // font-medium
+                        fontWeight: FontWeight.w500,
                         fontSize: 16,
-                        color:
-                            isActive
-                                ? Colors.red[600] // text-red-600
-                                : Colors.blue[600], // text-blue-600
+                        color: isActive ? Colors.red[600] : Colors.blue[600],
                       ),
                     ),
                   ),
-                  // İçeriği aç/kapat (React: hidden/block)
                   AnimatedSize(
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeInOut,
                     child: Visibility(
                       visible: isActive,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 4.0), // mt-1
+                        padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           itemContent,
                           style: TextStyle(
-                            fontSize: 14, // text-sm
-                            color: Colors.grey[700], // text-gray-600
+                            fontSize: 14,
+                            color: Colors.grey[700],
                           ),
                         ),
                       ),
@@ -257,33 +227,48 @@ class _SupportPageState extends State<SupportPage> {
     );
   }
 
-  // İletişim Bölümünü oluşturan widget
+  // İletişim Bölümünü oluşturan widget - IntrinsicHeight EKLENDİ
   Widget _buildContactSection(bool isDesktop, double borderRadius) {
     // Ortak gölge ve köşe yuvarlaklığı için dış Container
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white, // Form tarafı için arka plan
-        borderRadius: BorderRadius.circular(borderRadius), // rounded-lg
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1), // shadow-lg (yaklaşık)
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
         ],
       ),
-      // İçeriği köşelere göre kırp
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child:
             isDesktop
-                ? Row(
-                  children: [
-                    Expanded(flex: 1, child: _buildContactInfo()), // md:w-1/2
-                    Expanded(flex: 1, child: _buildContactForm()), // md:w-1/2
-                  ],
+                ? IntrinsicHeight(
+                  // <--- YENİ: Row'u IntrinsicHeight ile sar
+                  child: Row(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.stretch, // Çocukları dikeyde ger
+                    children: [
+                      Flexible(
+                        // Genişlik için esnek
+                        // flex: 1, // İsterseniz oran belirleyebilirsiniz
+                        child: _buildContactInfo(),
+                      ),
+                      Flexible(
+                        // Genişlik için esnek
+                        // flex: 1, // İsterseniz oran belirleyebilirsiniz
+                        child: _buildContactForm(),
+                      ),
+                    ],
+                  ),
                 )
-                : Column(children: [_buildContactInfo(), _buildContactForm()]),
+                : Column(
+                  // Mobil düzeni (Değişiklik yok)
+                  children: [_buildContactInfo(), _buildContactForm()],
+                ),
       ),
     );
   }
@@ -293,36 +278,38 @@ class _SupportPageState extends State<SupportPage> {
     return Container(
       padding: const EdgeInsets.all(32), // p-8
       decoration: BoxDecoration(
-        // Arka plan gradient (React: from-blue-500 to-purple-600)
         gradient: LinearGradient(
-          begin: Alignment.topLeft, // veya topCenter
-          end: Alignment.bottomRight, // veya bottomCenter
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [Colors.blue[500]!, Colors.purple[600]!],
         ),
-        // Köşe yuvarlaklığı dış ClipRRect tarafından sağlanıyor
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisSize: MainAxisSize.min, // KALDIRILDI: Dikeyde genişlemesine izin ver
+        mainAxisAlignment:
+            MainAxisAlignment.center, // İsteğe bağlı: İçeriği dikeyde ortala
         children: [
           const Text(
             'Get in Touch',
             style: TextStyle(
-              fontSize: 30, // text-3xl
-              fontWeight: FontWeight.bold, // font-bold
-              color: Colors.white, // text-white
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
-          const SizedBox(height: 24), // mb-6
+          const SizedBox(height: 24),
           Text(
             'Can\'t find what you\'re looking for? Send us a message and we\'ll get back to you as soon as possible.',
             style: TextStyle(
               color: Colors.white.withOpacity(0.9),
               fontSize: 16,
+              height: 1.4, // Satır yüksekliği
             ),
           ),
-          const SizedBox(height: 24), // mb-6 (veya space-y-4 için)
+          const SizedBox(height: 24),
           _buildContactItem(Icons.email_outlined, 'support@example.com'),
-          const SizedBox(height: 16), // space-y-4
+          const SizedBox(height: 16),
           _buildContactItem(Icons.phone_outlined, '+1 234 567 8900'),
         ],
       ),
@@ -333,8 +320,8 @@ class _SupportPageState extends State<SupportPage> {
   Widget _buildContactItem(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white, size: 24), // w-6 h-6
-        const SizedBox(width: 12), // mr-3
+        Icon(icon, color: Colors.white, size: 24),
+        const SizedBox(width: 12),
         Text(text, style: const TextStyle(color: Colors.white, fontSize: 16)),
       ],
     );
@@ -343,10 +330,9 @@ class _SupportPageState extends State<SupportPage> {
   // İletişim formunu gösteren bölüm (Sağ taraf)
   Widget _buildContactForm() {
     return Container(
-      padding: const EdgeInsets.all(32), // p-8
-      color: Colors.white, // Arka planı beyaz (Dış Container'dan farklı olarak)
-      // Köşe yuvarlaklığı dış ClipRRect tarafından sağlanıyor
-      child: const ContactForm(), // Daha önce oluşturduğun formu kullan
+      padding: const EdgeInsets.all(32),
+      color: Colors.white,
+      child: const ContactForm(), // Form widget'ını kullan
     );
   }
 }

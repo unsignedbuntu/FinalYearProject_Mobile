@@ -3,6 +3,7 @@ import 'package:project/widgets/sign_in_overlay.dart';
 import 'package:project/widgets/sign_in_button.dart';
 import 'package:project/widgets/favorite_button.dart'; // <-- YENİ İMPORT
 import 'package:project/widgets/cart_button.dart'; // <-- YENİ İMPORT (Bu dosyanın var olduğunu varsayıyoruz)
+import 'package:project/screens/cart/cart_page.dart'; // Import the cart page
 
 class Header extends StatefulWidget {
   const Header({super.key});
@@ -97,7 +98,7 @@ class _HeaderState extends State<Header> {
                       ),
                       onPressed: () {
                         // Ana sayfaya yönlendirme
-                        // Navigator.pushReplacementNamed(context, '/');
+                        Navigator.pushReplacementNamed(context, '/');
                       },
                     ),
                   ),
@@ -165,7 +166,10 @@ class _HeaderState extends State<Header> {
                   // SignInButton - CompositedTransformTarget ile sarmak
                   CompositedTransformTarget(
                     link: _layerLink, // LayerLink'i burada kullan
-                    child: SignInButton(onTap: _showSignInOverlay),
+                    child: SignInButton(
+                      onTap: _showSignInOverlay,
+                      isSelected: _isSignInOpen,
+                    ),
                   ),
 
                   const SizedBox(width: 30), // Butonlar arası boşluk
@@ -175,7 +179,7 @@ class _HeaderState extends State<Header> {
                     onTap: () {
                       // Favoriler sayfasına gitme işlemi
                       print("Favorites Tapped!"); // Örnek eylem
-                      // Navigator.pushNamed(context, '/favorites');
+                      Navigator.pushNamed(context, '/favorites');
                     },
                     // isSelected: false, // Gerekirse bu parametreyi kullanabilirsiniz
                   ),
@@ -186,8 +190,8 @@ class _HeaderState extends State<Header> {
                     // <-- MouseRegion/GestureDetector yerine direkt widget
                     onTap: () {
                       // Sepet sayfasına gitme işlemi
-                      print("Cart Tapped!"); // Örnek eylem
-                      // Navigator.pushNamed(context, '/cart');
+                      print("Cart Tapped!"); // Debugging için
+                      Navigator.pushNamed(context, '/cart');
                     },
                     // isSelected: false, // Gerekirse bu parametreyi kullanabilirsiniz
                   ),
