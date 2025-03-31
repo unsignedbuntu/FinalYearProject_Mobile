@@ -187,7 +187,7 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
         width: MediaQuery.of(context).size.width - 100,
         margin: const EdgeInsets.only(top: 10),
         constraints: const BoxConstraints(
-          maxWidth: 1700,
+          maxWidth: 1800,
           minHeight: 500,
           maxHeight: 700,
         ),
@@ -354,10 +354,10 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
     // Web'deki 4 kolonlu grid görünümü
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 24,
-        mainAxisSpacing: 24,
-        childAspectRatio: 0.9,
+        crossAxisCount: 4,
+        crossAxisSpacing: 6,
+        mainAxisSpacing: 2,
+        childAspectRatio: 1.3,
       ),
       itemCount: storeCategories.length,
       itemBuilder: (context, index) {
