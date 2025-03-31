@@ -3,25 +3,33 @@ class Product {
   final String name;
   final String? description;
   final double price;
-  final int stock;
-  final int categoryId;
   final String? imageUrl;
   final bool isActive;
   final DateTime createdAt;
   final DateTime? updatedAt;
+
+  // Web uyumluluğu için ilişkisel alanlar
+  final int? storeId;
+  final int? categoryId;
 
   Product({
     required this.id,
     required this.name,
     this.description,
     required this.price,
-    required this.stock,
-    required this.categoryId,
     this.imageUrl,
     required this.isActive,
     required this.createdAt,
     this.updatedAt,
+    this.storeId,
+    this.categoryId,
   });
+
+  // Web uyumluluğu için aliases
+  int get productID => id;
+  String get productName => name;
+  int? get storeID => storeId;
+  int? get categoryID => categoryId;
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
@@ -29,13 +37,13 @@ class Product {
       name: json['name'],
       description: json['description'],
       price: json['price'].toDouble(),
-      stock: json['stock'],
-      categoryId: json['categoryId'],
       imageUrl: json['imageUrl'],
       isActive: json['isActive'] ?? true,
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      storeId: json['storeId'],
+      categoryId: json['categoryId'],
     );
   }
 
@@ -45,12 +53,12 @@ class Product {
       'name': name,
       'description': description,
       'price': price,
-      'stock': stock,
-      'categoryId': categoryId,
       'imageUrl': imageUrl,
       'isActive': isActive,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'storeId': storeId,
+      'categoryId': categoryId,
     };
   }
 }

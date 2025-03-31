@@ -16,12 +16,18 @@ class CategoryService {
     try {
       final data = await _apiService.get(_endpoint);
       if (data is List) {
-        return data.map((json) => Category.fromJson(json)).toList();
+        final categories = data.map((json) => Category.fromJson(json)).toList();
+        print("Kategori sayısı: ${categories.length}");
+        return categories;
+      } else {
+        print(
+          "API geçersiz veri döndürdü. Beklenen: List, Alınan: ${data.runtimeType}",
+        );
       }
       return [];
     } catch (e) {
       print('Error fetching categories: $e');
-      return [];
+      rethrow; // Hatayı üst seviyeye ilet
     }
   }
 

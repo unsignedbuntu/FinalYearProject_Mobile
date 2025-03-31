@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 
@@ -75,9 +73,9 @@ class ApiService {
   // HTTP istekleri için yardımcı metotlar
   Future<dynamic> get(String endpoint) async {
     try {
-      // Debug çıktılarını kaldır veya azalt
-      if (kDebugMode && endpoint.contains('debug_mode')) {
-        print('API ÇAĞRISI: GET $endpoint');
+      // Debug çıktıları hata ayıklama için aktifleştirildi
+      if (kDebugMode) {
+        print('API ÇAĞRISI: GET $endpoint başlatılıyor');
       }
 
       // Endpoint'in / ile başladığından emin ol
@@ -86,42 +84,82 @@ class ApiService {
 
       final response = await _dio.get(sanitizedEndpoint);
 
-      if (response.statusCode == 200) {
+      if (kDebugMode) {
+        print(
+          'API YANIT: GET $sanitizedEndpoint - Status: ${response.statusCode}',
+        );
+        print('API YANIT DATA TÜRÜ: ${response.data.runtimeType}');
+        if (response.data != null) {
+          if (response.data is List) {
+            print('API YANIT ELEMAN SAYISI: ${response.data.length}');
+          } else if (response.data is Map) {
+            print('API YANIT KEYS: ${(response.data as Map).keys.join(', ')}');
+          }
+        }
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         // API yanıt formatına göre veriyi döndürüyoruz
         // API boş bir string dönmesi durumunda boş liste dönüyoruz
         if (response.data is String && (response.data as String).isEmpty) {
+          if (kDebugMode)
+            print('API YANIT: Boş string, boş liste döndürülüyor');
           return [];
         }
 
         // API yanıtı zaten bir liste ise, direkt onu döndürüyoruz
         if (response.data is List) {
+          if (kDebugMode)
+            print('API YANIT: Liste formatında, doğrudan döndürülüyor');
           return response.data;
         }
 
         // API yanıtı bir map ve data anahtarı varsa, içeriğini döndürüyoruz
         if (response.data is Map && response.data['data'] != null) {
+          if (kDebugMode) print('API YANIT: Map içinde data anahtarı bulundu');
           return response.data['data'];
         }
 
-        // Diğer durumlarda, tek bir öğeyi liste olarak sarıyoruz
+        // Diğer durumlarda, veriyi olduğu gibi döndürüyoruz
         if (response.data != null) {
-          return [response.data];
+          if (kDebugMode) print('API YANIT: Tekil obje döndürülüyor');
+          return response.data;
         }
 
+        if (kDebugMode) print('API YANIT: Null veri, boş liste döndürülüyor');
         return [];
       }
 
-      if (kDebugMode && response.statusCode != 200) {
+      if (kDebugMode) {
         print(
-          'API HATA: GET $sanitizedEndpoint - Status: ${response.statusCode}',
+          'API HATA: GET $sanitizedEndpoint - Status: ${response.statusCode} - Body: ${response.data}',
         );
       }
 
-      // Başarısız yanıt için boş liste döndürüyoruz
-      return [];
+      // Status 200 olmayan durumlarda exception fırlat
+      throw DioException(
+        requestOptions: RequestOptions(path: sanitizedEndpoint),
+        response: response,
+        type: DioExceptionType.badResponse,
+        error: 'API yanıt kodu başarısız: ${response.statusCode}',
+      );
     } on DioException catch (e) {
-      _handleError(e);
-      return [];
+      if (kDebugMode) {
+        print('API DIO EXCEPTION: ${e.message}');
+        print('API DIO ENDPOINT: $endpoint');
+        print('API DIO TYPE: ${e.type}');
+        if (e.response != null) {
+          print('API DIO STATUS: ${e.response?.statusCode}');
+          print('API DIO BODY: ${e.response?.data}');
+        }
+      }
+      rethrow; // Hatayı yukarı fırlat
+    } catch (e) {
+      if (kDebugMode) {
+        print('API GENEL HATA: $e');
+        print('API GENEL HATA ENDPOINT: $endpoint');
+      }
+      rethrow; // Genel hatayı da yukarı fırlat
     }
   }
 

@@ -9,6 +9,9 @@ class Store {
   final DateTime createdAt;
   final DateTime? updatedAt;
 
+  // Diğer ilişkiler için ekstra alan
+  final List<int>? categoryIds;
+
   Store({
     required this.id,
     required this.name,
@@ -19,7 +22,12 @@ class Store {
     required this.isActive,
     required this.createdAt,
     this.updatedAt,
+    this.categoryIds,
   });
+
+  // Web uyumluluğu için aliases
+  int get storeID => id;
+  String get storeName => name;
 
   factory Store.fromJson(Map<String, dynamic> json) {
     return Store(
@@ -33,6 +41,10 @@ class Store {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      categoryIds:
+          json['categoryIds'] != null
+              ? List<int>.from(json['categoryIds'])
+              : null,
     );
   }
 
@@ -47,6 +59,7 @@ class Store {
       'isActive': isActive,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'categoryIds': categoryIds,
     };
   }
 }

@@ -167,7 +167,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   // Form
                   Form(
                     key: _formKey,
-                    child: Container(
+                    child: SizedBox(
                       width: 400,
                       child: Column(
                         children: [
@@ -581,7 +581,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           const SizedBox(height: 24),
 
                           // Sign Up Button
-                          Container(
+                          SizedBox(
                             width: 300,
                             height: 75,
                             child: ElevatedButton(

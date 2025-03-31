@@ -16,12 +16,18 @@ class ProductService {
     try {
       final data = await _apiService.get(_endpoint);
       if (data is List) {
-        return data.map((json) => Product.fromJson(json)).toList();
+        final products = data.map((json) => Product.fromJson(json)).toList();
+        print("Ürün sayısı: ${products.length}");
+        return products;
+      } else {
+        print(
+          "API geçersiz veri döndürdü. Beklenen: List, Alınan: ${data.runtimeType}",
+        );
       }
       return [];
     } catch (e) {
       print('Error fetching products: $e');
-      return [];
+      rethrow; // Hatayı üst seviyeye ilet
     }
   }
 

@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-// Kendi projenize göre importları güncelleyin
-import 'package:project/components/icons/user_icon.dart';
-import 'package:project/components/icons/favorite_sidebar.dart'; // FavoriteButton artık kendi ikonlarını kullanıyor, bu belki gereksiz olabilir
-import 'package:project/components/icons/cart_hover.dart'; // CartButton da kendi ikonlarını kullanacak, bu belki gereksiz olabilir
 import 'package:project/widgets/sign_in_overlay.dart';
 import 'package:project/widgets/sign_in_button.dart';
 import 'package:project/widgets/favorite_button.dart'; // <-- YENİ İMPORT
@@ -18,8 +14,8 @@ class Header extends StatefulWidget {
 class _HeaderState extends State<Header> {
   bool _isSignInOpen = false;
   // bool _isHoveringSignIn = false; // SignInButton kendi hover state'ini yönetiyor
-  bool _isHoveringFavorites = false;
-  bool _isHoveringCart = false;
+  final bool _isHoveringFavorites = false;
+  final bool _isHoveringCart = false;
 
   // SignInButton ve Overlay arasındaki bağlantı için LayerLink
   final LayerLink _layerLink = LayerLink();

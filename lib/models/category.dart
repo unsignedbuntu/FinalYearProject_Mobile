@@ -6,6 +6,10 @@ class Category {
   final DateTime createdAt;
   final DateTime? updatedAt;
 
+  // Web uyumluluğu için ilişkisel alanlar
+  final int? storeId;
+  final List<int>? productIds;
+
   Category({
     required this.id,
     required this.name,
@@ -13,7 +17,14 @@ class Category {
     required this.isActive,
     required this.createdAt,
     this.updatedAt,
+    this.storeId,
+    this.productIds,
   });
+
+  // Web uyumluluğu için aliases
+  int get categoryID => id;
+  String get categoryName => name;
+  int? get storeID => storeId;
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
@@ -24,6 +35,11 @@ class Category {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      storeId: json['storeId'],
+      productIds:
+          json['productIds'] != null
+              ? List<int>.from(json['productIds'])
+              : null,
     );
   }
 
@@ -35,6 +51,8 @@ class Category {
       'isActive': isActive,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'storeId': storeId,
+      'productIds': productIds,
     };
   }
 }

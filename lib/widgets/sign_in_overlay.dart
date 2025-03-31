@@ -6,11 +6,11 @@ class SignInOverlay extends StatelessWidget {
   final LayerLink layerLink; // CompositedTransformFollower için LayerLink
 
   const SignInOverlay({
-    Key? key,
+    super.key,
     required this.isOpen,
     required this.onClose,
     required this.layerLink, // Yeni gerekli parametre
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class SignInOverlay extends StatelessWidget {
 
     return Material(
       color: Colors.transparent,
-      child: Container(
+      child: SizedBox(
         // Container tüm ekranı kapsıyor, böylece Stack için kesin boyut sağlanıyor
         width: screenSize.width,
         height: screenSize.height,

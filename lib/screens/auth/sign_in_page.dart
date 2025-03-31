@@ -122,7 +122,7 @@ class _SignInPageState extends State<SignInPage> {
                   const SizedBox(height: 40),
 
                   // Input Fields
-                  Container(
+                  SizedBox(
                     width: 300,
                     child: Column(
                       children: [

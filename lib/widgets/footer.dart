@@ -203,20 +203,18 @@ class Footer extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        ...links
-            .map(
-              (link) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    link,
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
-                ),
+        ...links.map(
+          (link) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: GestureDetector(
+              onTap: () {},
+              child: Text(
+                link,
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
               ),
-            )
-            .toList(),
+            ),
+          ),
+        ),
       ],
     );
   }

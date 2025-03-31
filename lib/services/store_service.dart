@@ -16,12 +16,18 @@ class StoreService {
     try {
       final data = await _apiService.get(_endpoint);
       if (data is List) {
-        return data.map((json) => Store.fromJson(json)).toList();
+        final stores = data.map((json) => Store.fromJson(json)).toList();
+        print("Store sayısı: ${stores.length}");
+        return stores;
+      } else {
+        print(
+          "API geçersiz veri döndürdü. Beklenen: List, Alınan: ${data.runtimeType}",
+        );
       }
       return [];
     } catch (e) {
       print('Error fetching stores: $e');
-      return [];
+      rethrow; // Hatayı üst seviyeye ilet
     }
   }
 
