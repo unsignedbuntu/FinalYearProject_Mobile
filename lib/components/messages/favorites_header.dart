@@ -16,6 +16,7 @@ class FavoritesHeader extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.favorite, color: Colors.red.shade700),
           const SizedBox(width: 12),
@@ -49,6 +50,10 @@ class FavoritesHeader extends StatelessWidget {
               label: Text(
                 'Clear All',
                 style: TextStyle(color: Colors.red.shade700),
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                minimumSize: const Size(10, 36),
               ),
             ),
         ],

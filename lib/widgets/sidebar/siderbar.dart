@@ -8,6 +8,7 @@ import 'package:project/components/icons/address.dart';
 import 'package:project/components/icons/favorite_sidebar.dart';
 import 'package:project/components/icons/ktun_gpt.dart';
 import 'package:project/screens/cart/cart_page.dart';
+import 'package:project/screens/favorites/favorites_page.dart';
 
 // Define colors (Web kodundan alınanlar ve mevcutlar)
 const Color sidebarBg = Color(0xFFF8F8F8);
@@ -275,7 +276,7 @@ class Sidebar extends StatelessWidget {
                   buildClickableItem(
                     icon: const FavoriteSidebarIcon(width: 37, height: 37),
                     text: "My favorites",
-                    routeName: '/favorites', // Rota adını tanımla
+                    routeName: FavoritesPage.routeName, // Rota adını tanımla
                     currentPath: currentPath,
                     iconActualWidth: 37,
                     iconActualHeight: 37,

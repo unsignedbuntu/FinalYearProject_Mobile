@@ -9,8 +9,8 @@ class CartFavoritesIcon extends StatelessWidget {
 
   const CartFavoritesIcon({
     super.key,
-    this.width = 24,
-    this.height = 24,
+    this.width = 32,
+    this.height = 32,
     this.color = Colors.black,
     this.onTap,
   });
@@ -36,12 +36,17 @@ class CartFavoritesIcon extends StatelessWidget {
   }
 
   static const String svgString = '''
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M17 3L19 6L16 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 3"/>
-  <path d="M13.5 3C13.5 4.38071 12.3807 5.5 11 5.5C9.61929 5.5 8.5 4.38071 8.5 3C8.5 1.61929 9.61929 0.5 11 0.5C12.3807 0.5 13.5 1.61929 13.5 3Z" stroke="currentColor" stroke-linecap="round"/>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <mask id="mask0_456_976" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="1" y="3" width="30" height="26">
+    <path d="M25.9999 21.3333H8.66659L5.33325 8H29.3333L25.9999 21.3333Z" fill="#555555"/>
+    <path d="M2 4H4.33333L5.33333 8M5.33333 8L8.66667 21.3333H26L29.3333 8H5.33333Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8.66675 28C9.77132 28 10.6667 27.1046 10.6667 26C10.6667 24.8954 9.77132 24 8.66675 24C7.56218 24 6.66675 24.8954 6.66675 26C6.66675 27.1046 7.56218 28 8.66675 28Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M26 28C27.1046 28 28 27.1046 28 26C28 24.8954 27.1046 24 26 24C24.8954 24 24 24.8954 24 26C24 27.1046 24.8954 28 26 28Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M14.6667 14.6667H20.0001M17.3334 17.3333V12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </mask>
+  <g mask="url(#mask0_456_976)">
+    <path d="M0 0H32V32H0V0Z" fill="currentColor"/>
+  </g>
 </svg>
   ''';
 }

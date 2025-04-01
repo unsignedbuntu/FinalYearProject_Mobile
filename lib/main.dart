@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:project/screens/favorites/favorites_page.dart';
 import 'presentation/pages/home_page.dart';
 import 'presentation/pages/profile_page.dart';
 import 'presentation/pages/splash_screen.dart';
 import 'core/constants/app_theme.dart';
 import 'widgets/landing_page.dart';
 import 'screens/cart/cart_page.dart';
+import 'screens/favorites/edit_list_page.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -55,6 +57,8 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/cart': (context) => const CartPage(),
         '/profile': (context) => const ProfilePage(),
+        '/favorites': (context) => const FavoritesPage(),
+        '/favorites/edit': (context) => const EditListPage(),
 
         '/discount-coupons':
             (context) => const PlaceholderPage(title: 'My Discount Coupons'),
@@ -64,7 +68,6 @@ class MyApp extends StatelessWidget {
             (context) => const PlaceholderPage(title: 'My User Information'),
         '/address-info':
             (context) => const PlaceholderPage(title: 'My Address Information'),
-        '/favorites': (context) => const PlaceholderPage(title: 'My Favorites'),
         '/payment': (context) => const PlaceholderPage(title: 'Payment'),
       },
     );
