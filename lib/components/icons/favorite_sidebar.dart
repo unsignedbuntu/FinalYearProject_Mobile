@@ -9,8 +9,8 @@ class FavoriteSidebarIcon extends StatelessWidget {
 
   const FavoriteSidebarIcon({
     super.key,
-    this.width = 24,
-    this.height = 24,
+    this.width = 37,
+    this.height = 37,
     this.color = Colors.black,
     this.onTap,
   });
@@ -36,8 +36,8 @@ class FavoriteSidebarIcon extends StatelessWidget {
   }
 
   static const String svgString = '''
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M4.31802 6.31802C2.56066 8.07538 2.56066 10.9246 4.31802 12.682L12.0001 20.364L19.682 12.682C21.4393 10.9246 21.4393 8.07538 19.682 6.31802C17.9246 4.56066 15.0754 4.56066 13.318 6.31802L12.0001 7.63609L10.682 6.31802C8.92468 4.56066 6.07538 4.56066 4.31802 6.31802Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<svg width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M18.5017 6.98148C22.1231 3.73083 27.7193 3.83875 31.2075 7.33426C34.6958 10.8298 34.8156 16.3987 31.5713 20.0309L18.5 33.1227L5.42895 20.0309C2.18478 16.3987 2.30605 10.821 5.79276 7.33426C9.28341 3.84361 14.8698 3.72601 18.5017 6.98148Z" fill="currentColor"/>
 </svg>
   ''';
 }

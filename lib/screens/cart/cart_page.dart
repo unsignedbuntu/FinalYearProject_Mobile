@@ -30,6 +30,7 @@ class CartPage extends ConsumerWidget {
     final cartState = ref.watch(cartProvider);
     final cartNotifier = ref.read(cartProvider.notifier);
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     // --- Build Undo Message (Example using SnackBar) ---
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -89,22 +90,28 @@ class CartPage extends ConsumerWidget {
       }
     });
 
+    // Web'de fixed genişlikler kullanılıyor, responsive değil
+    const double contentStartX = 370.0; // Sidebar'ın sağından başlar
+    const double contentWidth = 800.0; // Web'de sabit genişlik
+    const double cartSummaryWidth = 255.0;
+    const double cartSummaryRight = 372.0;
+
     return Scaffold(
       body: Stack(
         children: [
-          // Sidebar - geri eklendi
-          const Positioned(left: 47.0, top: 55.0, child: Sidebar()),
+          // Sidebar - Stack içinde doğru şekilde konumlandırıldı
+          const Sidebar(),
 
           // Main Content - Web'deki gibi konumlandırdık
           Positioned(
-            left: 391.0,
-            top: 87.0 + 55.0,
+            left: contentStartX,
+            top: 142.0, // 87 + 55
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
+                // Header with title and delete button
                 SizedBox(
-                  width: 800,
+                  width: contentWidth,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -118,33 +125,30 @@ class CartPage extends ConsumerWidget {
                         ),
                       ),
                       // Delete Button
-                      Row(
-                        children: [
-                          InkWell(
-                            onTap:
-                                cartState.products.isEmpty
-                                    ? null
-                                    : () => cartNotifier.removeAllProducts(),
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Delete products",
-                                  style: TextStyle(
-                                    color: deleteTextColor,
-                                    fontFamily: ralewayFont,
-                                    fontSize: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                BinIcon(
-                                  width: 24,
-                                  height: 24,
-                                  color: deleteTextColor,
-                                ),
-                              ],
+                      InkWell(
+                        onTap:
+                            cartState.products.isEmpty
+                                ? null
+                                : () => cartNotifier.removeAllProducts(),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              "Delete products",
+                              style: TextStyle(
+                                color: deleteTextColor,
+                                fontFamily: ralewayFont,
+                                fontSize: 24,
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 8),
+                            BinIcon(
+                              width: 24,
+                              height: 24,
+                              color: deleteTextColor,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -153,7 +157,7 @@ class CartPage extends ConsumerWidget {
 
                 // Coupon Bar - SVG ikonlarını doğru şekilde kullanıyoruz
                 Container(
-                  width: 800,
+                  width: contentWidth,
                   height: 80,
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   decoration: BoxDecoration(
@@ -199,11 +203,10 @@ class CartPage extends ConsumerWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // Products List
+                // Products List in a fixed width container
                 SizedBox(
-                  height:
-                      MediaQuery.of(context).size.height -
-                      300, // Dinamik yükseklik
+                  width: contentWidth,
+                  height: screenHeight - 300, // Dinamik yükseklik
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
@@ -254,7 +257,7 @@ class CartPage extends ConsumerWidget {
 
           // Selected Products Summary - Web'deki gibi konumlandırıldı
           Positioned(
-            right: 372.0,
+            right: cartSummaryRight,
             top: 205.0,
             child: CartSummary(
               selectedCount: cartState.selectedProducts.length,

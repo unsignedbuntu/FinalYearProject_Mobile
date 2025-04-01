@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:project/components/icons/cart.dart';
+import 'package:project/components/icons/my_reviews.dart';
+import 'package:project/components/icons/coupon.dart';
+import 'package:project/components/icons/stores.dart';
+import 'package:project/components/icons/user_inf_sidebar.dart';
+import 'package:project/components/icons/address.dart';
+import 'package:project/components/icons/favorite_sidebar.dart';
+import 'package:project/components/icons/ktun_gpt.dart';
 
 // Define colors for clarity
 const Color sidebarBg = Color(0xFFF8F8F8);
 const Color itemBg = Colors.white;
-const Color hoverColor = Color(
-  0xFFFFE8D6,
-); // Simulate hover with splash/highlight
+const Color hoverColor = Color(0xFFFFE8D6); // Web'deki hover rengi
 const Color activeColor = Color(0xFF00EEFF);
-const Color dividerColor =
-    Colors.red; // Or Color(0xFFEF4444) for Tailwind's red-500
+const Color dividerColor = Colors.red;
 const Color ktunGptBg = Color.fromRGBO(225, 255, 0, 0.5);
 const Color ktunGptText = Color(0xFF4000FF);
 const Color defaultTextColor = Colors.black;
@@ -20,312 +24,241 @@ class Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get current route name for active state highlighting
-    // This requires you to use named routes
     final String? currentPath = ModalRoute.of(context)?.settings.name;
 
-    // --- Helper Function for Clickable Sidebar Items ---
     Widget buildClickableItem({
-      required String iconPath, // Path to your SVG asset
+      required Widget icon,
       required String text,
-      required String routeName, // The named route to navigate to
+      required String routeName,
       required String? currentPath,
-      double iconWidth = 37.0,
-      double iconHeight = 37.0,
-      Color iconColor = defaultTextColor, // Default icon color
     }) {
       final bool isActive = currentPath == routeName;
 
-      return Material(
-        color:
-            isActive ? activeColor : itemBg, // Background based on active state
-        child: InkWell(
-          onTap: () {
-            // Navigate only if not already on the page
-            if (!isActive) {
-              Navigator.pushNamed(context, routeName);
-            }
-          },
-          splashColor: hoverColor.withOpacity(0.5),
-          highlightColor: hoverColor.withOpacity(0.3),
-          child: Container(
-            // Mimic Tailwind's -mx-4 pl-2 => Padding horizontal adjusted
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-              horizontal: 8.0,
-            ), // p-2 equivalent
-            child: Row(
-              children: [
-                // Icon container (w-[40px] flex justify-start)
-                SizedBox(
-                  width: 40.0,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: SvgPicture.asset(
-                      iconPath,
-                      width: iconWidth,
-                      height: iconHeight,
-                      colorFilter: ColorFilter.mode(
-                        iconColor,
-                        BlendMode.srcIn,
-                      ), // Apply color if needed
-                      // ignore: deprecated_member_use
-                      color:
-                          iconColor == defaultTextColor
-                              ? null
-                              : iconColor, // Older way, might be needed for some SVGs
+      return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Material(
+          color: isActive ? activeColor : itemBg,
+          borderRadius: BorderRadius.circular(4),
+          child: InkWell(
+            onTap: () {
+              if (!isActive) {
+                Navigator.pushNamed(context, routeName);
+              }
+            },
+            hoverColor: hoverColor,
+            borderRadius: BorderRadius.circular(4),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 2.0,
+              ),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 40.0,
+                    child: Align(alignment: Alignment.centerLeft, child: icon),
+                  ),
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: Text(
+                      text,
+                      style: const TextStyle(
+                        fontFamily: ralewayFont,
+                        fontSize: 20.0,
+                        color: defaultTextColor,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
-                ),
-                const SizedBox(width: 8.0), // gap-2 equivalent
-                // Text (font-raleway text-[20px] text-black whitespace-nowrap)
-                Expanded(
-                  // Allow text to take remaining space but prevent overflow issues if needed
-                  child: Text(
-                    text,
-                    style: const TextStyle(
-                      fontFamily: ralewayFont,
-                      fontSize: 20.0,
-                      color: defaultTextColor,
-                    ),
-                    overflow:
-                        TextOverflow.ellipsis, // Handle potential overflow
-                    maxLines: 1, // Ensure single line like whitespace-nowrap
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       );
     }
 
-    // --- Helper Function for Sections ---
-    Widget buildSection({
-      required String title,
-      required List<Widget> items,
-      double containerHeight = 190.0, // Approximate default
-    }) {
+    Widget buildSection({required String title, required List<Widget> items}) {
       return Container(
-        // w-[250px] bg-white m-[0_7px_36px_3px] p-4
-        // Note: Margins are handled by the parent Column's spacing
         width: 250,
-        // height: containerHeight, // Fixed height can cause overflow, consider removing or using IntrinsicHeight
-        padding: const EdgeInsets.all(16.0), // p-4
+        margin: const EdgeInsets.only(bottom: 36.0, left: 3.0, right: 7.0),
+        padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: itemBg,
-          borderRadius: BorderRadius.circular(
-            8.0,
-          ), // Add some rounding if desired
+          borderRadius: BorderRadius.circular(4.0),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize:
-              MainAxisSize.min, // Make column take minimum space needed
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Title (w-[115px] h-[28px] font-raleway text-[24px] text-black mb-4)
             Text(
               title,
               style: const TextStyle(
                 fontFamily: ralewayFont,
                 fontSize: 24.0,
                 color: defaultTextColor,
-                fontWeight: FontWeight.bold, // Make title bolder
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16.0), // mb-4 (applied after title)
-            // Divider (w-[250px] h-[1px] bg-red-500 mb-1 ml-[-16px])
-            // Using Divider widget which spans width automatically
-            const Divider(
-              color: dividerColor,
-              height: 1.0, // Controls space around, thickness is thickness
-              thickness: 1.0,
+            const SizedBox(height: 16.0),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // Divider offsetting outside the container
+                Positioned(
+                  left: -16.0,
+                  right: 0,
+                  child: Container(
+                    height: 1.0,
+                    width: 250.0,
+                    color: dividerColor,
+                  ),
+                ),
+                // Content that will have negative margin for hover effect
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:
+                      items
+                          .map(
+                            (item) => Padding(
+                              padding: const EdgeInsets.only(
+                                top: 4.0,
+                                bottom: 4.0,
+                              ),
+                              child: item,
+                            ),
+                          )
+                          .toList(),
+                ),
+              ],
             ),
-            const SizedBox(height: 4.0), // mb-1 (applied after divider)
-            // Items
-            ...items,
           ],
         ),
       );
     }
 
-    // --- Main Sidebar Build ---
     return Positioned(
-      // style={{ position: 'absolute', left: '47px', top: '55px' }}
       left: 47.0,
       top: 55.0,
-      child: Material(
-        // Need Material for InkWell effects if sidebarBg isn't standard
-        child: Container(
-          // className="w-[300px] h-[880px] bg-[#f8f8f8] p-[15px_16px_47px_24px] m-[32px_34px_0_23px]"
-          // Note: Margin is complex in Positioned, parent might handle it better. Padding is applied inside.
-          width: 300.0,
-          height:
-              880.0, // Be cautious with fixed heights, might overflow on small screens
-          color: sidebarBg,
-          // Apply the complex padding
-          padding: const EdgeInsets.only(
-            top: 15.0,
-            right: 16.0,
-            bottom: 47.0,
-            left: 24.0,
-          ),
-          child: SingleChildScrollView(
-            // Add scroll for safety if height is fixed
-            child: Column(
-              children: [
-                // My Orders Section
-                buildSection(
-                  title: "My Orders",
-                  containerHeight: 190,
-                  items: [
-                    buildClickableItem(
-                      iconPath:
-                          'assets/icons/cart.svg', // Replace with actual path
-                      text: "My cart",
-                      routeName:
-                          '/cart', // Named route for cart - kept the same
-                      currentPath: currentPath,
-                      iconWidth: 48,
-                      iconHeight: 34,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ), // Adjust spacing if needed (like -mt-3)
-                    buildClickableItem(
-                      iconPath:
-                          'assets/icons/my_reviews.svg', // Replace with actual path
-                      text: "My reviews",
-                      routeName: '/my-reviews', // Your named route
-                      currentPath: currentPath,
-                      iconWidth: 50,
-                      iconHeight: 38,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 36.0), // mb-[36px]
-                // Special for you Section
-                buildSection(
-                  title: "Special for you",
-                  containerHeight: 180,
-                  items: [
-                    buildClickableItem(
-                      iconPath:
-                          'assets/icons/coupon.svg', // Replace with actual path
-                      text: "My discount coupons",
-                      routeName: '/discount-coupons', // Your named route
-                      currentPath: currentPath,
-                    ),
-                    const SizedBox(height: 4),
-                    buildClickableItem(
-                      iconPath:
-                          'assets/icons/stores.svg', // Replace with actual path
-                      text: "My followed stores",
-                      routeName: '/my-followed-stores', // Your named route
-                      currentPath: currentPath,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 36.0), // mb-[36px]
-                // My Account Section
-                buildSection(
-                  title: "My Account",
-                  containerHeight: 240,
-                  items: [
-                    buildClickableItem(
-                      iconPath:
-                          'assets/icons/user_inf_sidebar.svg', // Replace path
-                      text: "My user information",
-                      routeName: '/user-info', // Your named route
-                      currentPath: currentPath,
-                    ),
-                    const SizedBox(height: 4),
-                    buildClickableItem(
-                      iconPath: 'assets/icons/address.svg', // Replace path
-                      text: "My address information",
-                      routeName: '/address-info', // Your named route
-                      currentPath: currentPath,
-                      iconColor:
-                          defaultTextColor, // Explicitly pass default or custom color if needed
-                    ),
-                    const SizedBox(height: 4),
-                    buildClickableItem(
-                      iconPath:
-                          'assets/icons/favorite_sidebar.svg', // Replace path
-                      text: "My favorites",
-                      routeName: '/favorites', // Your named route
-                      currentPath: currentPath,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 36.0,
-                ), // Spacing before KTUNGpt, adjust as needed
-                // KTUNGpt Section
-                Container(
-                  // w-[260px] h-[150px] mx-auto mt-[20px] p-[5px_2px_35px_6px] rounded-lg
-                  width: 260.0,
-                  padding: const EdgeInsets.only(
-                    top: 5.0,
-                    left: 6.0,
-                    right: 2.0,
-                    bottom: 35.0,
+      child: Container(
+        width: 300.0,
+        height: 880.0,
+        color: sidebarBg,
+        padding: const EdgeInsets.only(
+          top: 15.0,
+          right: 16.0,
+          bottom: 47.0,
+          left: 24.0,
+        ),
+        margin: const EdgeInsets.fromLTRB(23, 32, 34, 0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildSection(
+                title: "My Orders",
+                items: [
+                  buildClickableItem(
+                    icon: const CartMainIcon(width: 48, height: 34),
+                    text: "My cart",
+                    routeName: '/cart',
+                    currentPath: currentPath,
                   ),
-                  decoration: BoxDecoration(
-                    color: ktunGptBg,
-                    borderRadius: BorderRadius.circular(8.0), // rounded-lg
+                  buildClickableItem(
+                    icon: const MyReviewsIcon(width: 50, height: 38),
+                    text: "My reviews",
+                    routeName: '/my-reviews',
+                    currentPath: currentPath,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Icon and Title Row
-                      Row(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start, // Align items to the top
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/ktun_gpt.svg', // Replace with actual path
-                            width: 50.0,
-                            height: 50.0,
-                            // ignore: deprecated_member_use
-                            color:
-                                ktunGptText, // Apply color directly if SVG structure allows
-                            colorFilter: const ColorFilter.mode(
-                              ktunGptText,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0), // gap-2
-                          // Need Expanded for title if it can be long
-                          const Expanded(
-                            child: Text(
-                              "Ask to KTUNGpt",
-                              style: TextStyle(
-                                fontFamily: ralewayFont,
-                                fontSize: 26.0,
-                                color: ktunGptText,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24.0), // mt-6 (adjust value)
-                      // Description Text
-                      const Text(
-                        "I'm always Here! I answer your questions immediately!",
-                        style: TextStyle(
-                          fontFamily: ralewayFont,
-                          fontSize: 16.0,
-                          color:
-                              defaultTextColor, // Assuming black text? Adjust if needed
-                          height: 1.2, // leading-tight approximation
+                ],
+              ),
+              buildSection(
+                title: "Special for you",
+                items: [
+                  buildClickableItem(
+                    icon: const CouponIcon(width: 37, height: 37),
+                    text: "My discount coupons",
+                    routeName: '/discount-coupons',
+                    currentPath: currentPath,
+                  ),
+                  buildClickableItem(
+                    icon: const StoresIcon(width: 37, height: 37),
+                    text: "My followed stores",
+                    routeName: '/my-followed-stores',
+                    currentPath: currentPath,
+                  ),
+                ],
+              ),
+              buildSection(
+                title: "My Account",
+                items: [
+                  buildClickableItem(
+                    icon: const UserInfSidebarIcon(width: 37, height: 37),
+                    text: "My user information",
+                    routeName: '/user-info',
+                    currentPath: currentPath,
+                  ),
+                  buildClickableItem(
+                    icon: const AddressIcon(width: 37, height: 37),
+                    text: "My address information",
+                    routeName: '/address-info',
+                    currentPath: currentPath,
+                  ),
+                  buildClickableItem(
+                    icon: const FavoriteSidebarIcon(width: 37, height: 37),
+                    text: "My favorites",
+                    routeName: '/favorites',
+                    currentPath: currentPath,
+                  ),
+                ],
+              ),
+              Container(
+                width: 260.0,
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.fromLTRB(6, 5, 2, 35),
+                decoration: BoxDecoration(
+                  color: ktunGptBg,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        KtunGptIcon(
+                          width: 50.0,
+                          height: 50.0,
+                          color: ktunGptText,
                         ),
+                        const SizedBox(width: 8.0),
+                        const Expanded(
+                          child: Text(
+                            "Ask to KTUNGpt",
+                            style: TextStyle(
+                              fontFamily: ralewayFont,
+                              fontSize: 26.0,
+                              color: ktunGptText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24.0),
+                    const Text(
+                      "I'm always Here! I answer your questions immediately!",
+                      style: TextStyle(
+                        fontFamily: ralewayFont,
+                        fontSize: 16.0,
+                        color: defaultTextColor,
+                        height: 1.2,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

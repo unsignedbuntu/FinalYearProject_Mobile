@@ -11,6 +11,33 @@ void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
+// Sidebar için placeholder sayfası
+class PlaceholderPage extends StatelessWidget {
+  final String title;
+
+  const PlaceholderPage({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(title, style: const TextStyle(fontSize: 24)),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Geri Dön'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -28,6 +55,17 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/cart': (context) => const CartPage(),
         '/profile': (context) => const ProfilePage(),
+
+        '/discount-coupons':
+            (context) => const PlaceholderPage(title: 'My Discount Coupons'),
+        '/my-followed-stores':
+            (context) => const PlaceholderPage(title: 'My Followed Stores'),
+        '/user-info':
+            (context) => const PlaceholderPage(title: 'My User Information'),
+        '/address-info':
+            (context) => const PlaceholderPage(title: 'My Address Information'),
+        '/favorites': (context) => const PlaceholderPage(title: 'My Favorites'),
+        '/payment': (context) => const PlaceholderPage(title: 'Payment'),
       },
     );
   }

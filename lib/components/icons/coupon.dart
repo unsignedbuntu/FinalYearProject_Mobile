@@ -9,8 +9,8 @@ class CouponIcon extends StatelessWidget {
 
   const CouponIcon({
     super.key,
-    this.width = 24,
-    this.height = 24,
+    this.width = 37,
+    this.height = 37,
     this.color = Colors.black,
     this.onTap,
   });
@@ -36,18 +36,8 @@ class CouponIcon extends StatelessWidget {
   }
 
   static const String svgString = '''
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_1036_109)">
-<path d="M19.95 10.5C19.825 10.1 19.825 9.7 19.95 9.3L20.875 6.55C21.075 6 20.75 5.4 20.15 5.25L17.3 4.575C16.9 4.475 16.575 4.225 16.35 3.875L14.65 1.375C14.3 0.875 13.625 0.75 13.125 1.1L10.825 2.6C10.475 2.825 10.075 2.9 9.675 2.825L6.875 2.25C6.275 2.15 5.725 2.55 5.675 3.175L5.375 6.075C5.325 6.475 5.125 6.825 4.825 7.1L2.575 9.125C2.125 9.525 2.1 10.2 2.525 10.65L4.675 13.025C4.95 13.325 5.075 13.725 5.025 14.125L4.6 17.025C4.5 17.65 4.95 18.2 5.55 18.25L8.475 18.35C8.875 18.375 9.25 18.575 9.5 18.9L11.525 21.3C11.925 21.775 12.6 21.825 13.075 21.425L15.4 19.425C15.725 19.15 16.125 19.025 16.525 19.05L19.425 19.25C20.05 19.3 20.6 18.85 20.65 18.25L20.75 15.325C20.775 14.925 20.95 14.55 21.25 14.275L23.525 12.175C24 11.75 24.025 11.075 23.575 10.625L21.55 8.5C21.275 8.2 21.075 7.875 21 7.475" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M12 12.5L12.5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M7 8L7.5 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M17 17L17.5 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
-<defs>
-<clipPath id="clip0_1036_109">
-<rect width="24" height="24" fill="white"/>
-</clipPath>
-</defs>
+<svg width="37" height="37" viewBox="0 0 37 37" xmlns="http://www.w3.org/2000/svg">
+  <path d="M3.09082 14.6453V6.16612C3.09082 5.31469 3.78106 4.62445 4.63249 4.62445H32.3825C33.234 4.62445 33.9242 5.31469 33.9242 6.16612V14.6453C31.7956 14.6453 30.07 16.3709 30.07 18.4995C30.07 20.6281 31.7956 22.3537 33.9242 22.3537V30.8328C33.9242 31.6842 33.234 32.3745 32.3825 32.3745H4.63249C3.78106 32.3745 3.09082 31.6842 3.09082 30.8328V22.3537C5.21941 22.3537 6.94499 20.6281 6.94499 18.4995C6.94499 16.3709 5.21941 14.6453 3.09082 14.6453ZM13.8825 13.8744V16.9578H23.1325V13.8744H13.8825ZM13.8825 20.0412V23.1245H23.1325V20.0412H13.8825Z" fill="currentColor"/>
 </svg>
   ''';
 }
