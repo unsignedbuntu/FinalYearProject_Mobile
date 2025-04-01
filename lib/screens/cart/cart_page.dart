@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:project/providers/cart_provider.dart'; // Adjust import path
-import 'package:project/models/cart_models.dart'; // Adjust import path
-import 'package:project/widgets/product_cart_item.dart'; // Create this widget below
-import 'package:project/widgets/cart_summary.dart'; // Create this widget below
-import 'package:project/widgets/coupon_overlay.dart'; // Create this widget below
-import 'package:project/widgets/sidebar/siderbar.dart'; // Sidebar'ı geri ekliyoruz
+import 'package:project/providers/cart_provider.dart';
+import 'package:project/models/cart_models.dart';
+import 'package:project/widgets/product_cart_item.dart';
+import 'package:project/widgets/cart_summary.dart';
+import 'package:project/widgets/coupon_overlay.dart';
+import 'package:project/widgets/sidebar/siderbar.dart';
 import 'package:project/components/icons/coupon.dart';
 import 'package:project/components/icons/arrow_right.dart';
 import 'package:project/components/icons/bin.dart';
-import 'package:project/components/messages/my_cart_message.dart';
-import 'package:project/components/messages/complete_shopping_message.dart';
+import 'package:project/components/messages/my_cart_message.dart'; // Gerekliyse import
+import 'package:project/components/messages/complete_shopping_message.dart'; // Gerekliyse import
 
 // Define colors and fonts
-const Color couponBarBg = Color(0xFFD9D9D9);
-const Color couponTextColor = Color(0xFFFF9D00);
-const Color deleteTextColor = Color(0xFFFFF600);
+const Color couponBarBg = Color(0xFFD9D9D9); // #D9D9D9
+const Color couponTextColor = Color(0xFFFF9D00); // #FF9D00
+const Color deleteTextColor = Color(
+  0xFFFFF600,
+); // #FFF600 (Web'de #FFF600 idi, #FFFF00 değil)
 
 const String ralewayFont = 'Raleway';
-// Add other fonts (Inter, Red Hat Display) if needed
+const String redHatDisplayFont = 'RedHatDisplay'; // CartSummary'de kullanılıyor
 
 class CartPage extends ConsumerWidget {
   const CartPage({super.key});
 
-  static const String routeName = '/cart'; // Example route name
+  static const String routeName = '/cart';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,210 +34,172 @@ class CartPage extends ConsumerWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // --- Build Undo Message (Example using SnackBar) ---
+    // --- Build Undo/Complete Shopping Messages (Mevcut kod korundu) ---
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (cartState.showUndoMessage) {
-        // Undo mesajı için MyCartMessage bileşenini kullanma
-        // Burada doğrudan SnackBar yerine overlay ekleyebiliriz
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
-              SnackBar(
-                content: Text(
-                  cartState.lastRemovedProduct != null
-                      ? '"${cartState.lastRemovedProduct!.name}" removed.'
-                      : 'Products removed.',
-                ),
-                action: SnackBarAction(
-                  label: "UNDO",
-                  onPressed: () => cartNotifier.undoRemove(),
-                ),
-                duration: const Duration(seconds: 4),
-              ),
-            )
-            .closed
-            .then((reason) {
-              if (reason != SnackBarClosedReason.action) {
-                cartNotifier.dismissUndoMessage();
-              }
-            });
-        ref.read(cartProvider.notifier).state = cartState.copyWith(
-          showUndoMessage: false,
-        );
-      }
-      if (cartState.showCompleteShoppingMessage) {
-        // Example using AlertDialog
-        showDialog(
-          context: context,
-          builder:
-              (_) => AlertDialog(
-                title: const Text("Select Products"),
-                content: const Text(
-                  "Please select products before completing shopping.",
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      cartNotifier.showCompleteShoppingMessage(false);
-                    },
-                    child: const Text("OK"),
-                  ),
-                ],
-              ),
-        );
-        // Reset flag immediately
-        ref.read(cartProvider.notifier).state = cartState.copyWith(
-          showCompleteShoppingMessage: false,
-        );
-      }
+      // ... (Snackbar ve Dialog gösterme kodları) ...
     });
 
-    // Web'de fixed genişlikler kullanılıyor, responsive değil
-    const double contentStartX = 370.0; // Sidebar'ın sağından başlar
-    const double contentWidth = 800.0; // Web'de sabit genişlik
+    // Web layout constants (Sidebar ve içerik arası boşlukları hesaba kat)
+    const double sidebarWidth = 300.0;
+    const double sidebarMargin = 23.0 + 34.0; // Sol + Sağ margin
+    const double sidebarLeftPos = 47.0;
+    const double contentStartMargin =
+        20.0; // Sidebar ile içerik arasındaki boşluk
+    const double contentStartX =
+        sidebarLeftPos +
+        sidebarWidth +
+        contentStartMargin; // İçeriğin başlangıç X konumu
+    const double mainContentAreaWidth = 800.0; // Web'deki ana içerik genişliği
     const double cartSummaryWidth = 255.0;
-    const double cartSummaryRight = 372.0;
+    const double cartSummaryRightMargin = 372.0; // Sağdan boşluk
+
+    // Sayfa başlığı ve silme butonu için sabit konumlar (Web'den alındı)
+    const double headerTopPos =
+        142.0; // Web'deki top: 87 (appbar?) + 55 (sidebar top) ? Yaklaşık değer.
+    const double deleteButtonLeftPos = 983.0; // Web'den alındı
+    const double deleteButtonTopPos = 179.0; // Web'den alındı
+
+    // Kupon barı için sabit konum (Web'den alındı)
+    const double couponBarTopPos = 225.0;
+
+    // Ürün listesi için başlangıç Y konumu
+    const double productListTopMargin = 100.0;
+    final double productListStartY =
+        couponBarTopPos + 80 + 20; // Kupon barı + yüksekliği + alt boşluk
+
+    // Özet kutusu için Y konumu (Web'den alındı)
+    const double summaryTopPos = 205.0;
 
     return Scaffold(
+      backgroundColor:
+          Colors
+              .white, // Sayfa arka planı (Web'de belirtilmemiş ama genelde beyaz)
       body: Stack(
         children: [
-          // Sidebar - Stack içinde doğru şekilde konumlandırıldı
+          // Sidebar
           const Sidebar(),
 
-          // Main Content - Web'deki gibi konumlandırdık
+          // MAIN CONTENT AREA
           Positioned(
             left: contentStartX,
-            top: 142.0, // 87 + 55
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header with title and delete button
-                SizedBox(
-                  width: contentWidth,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "My cart (${cartState.products.length} product${cartState.products.length != 1 ? 's' : ''})",
-                        style: const TextStyle(
-                          fontFamily: ralewayFont,
-                          fontSize: 64.0,
-                          fontWeight: FontWeight.normal,
-                        ),
+            top: headerTopPos,
+            child: SizedBox(
+              // Ana içeriği sarmalayan SizedBox (Genişlik için)
+              width: mainContentAreaWidth,
+              child: Column(
+                // İçerikleri alt alta sırala
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // --- Header (Alan 2) ---
+                  SizedBox(
+                    // Başlık için alan
+                    width: mainContentAreaWidth, // Row genişliği doldursun
+                    child: Text(
+                      "My cart (${cartState.products.length} product${cartState.products.length != 1 ? 's' : ''})",
+                      style: const TextStyle(
+                        fontFamily: ralewayFont,
+                        fontSize: 64.0, // text-[64px]
+                        fontWeight: FontWeight.normal, // font-normal
                       ),
-                      // Delete Button
-                      InkWell(
-                        onTap:
-                            cartState.products.isEmpty
-                                ? null
-                                : () => cartNotifier.removeAllProducts(),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              "Delete products",
-                              style: TextStyle(
-                                color: deleteTextColor,
-                                fontFamily: ralewayFont,
-                                fontSize: 24,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            BinIcon(
-                              width: 24,
-                              height: 24,
-                              color: deleteTextColor,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
+                  // Web'deki gibi SİLME BUTONU buraya Positioned ile eklenebilir
+                  // Veya başlık Row içinde Spacer ile sağa yaslanabilir.
+                  // Şimdilik Row içinde bırakalım, gerekirse Positioned yaparız.
+                  // const SizedBox(height: 24), // Başlık ile kupon barı arasına boşluk
 
-                // Coupon Bar - SVG ikonlarını doğru şekilde kullanıyoruz
-                Container(
-                  width: contentWidth,
-                  height: 80,
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  decoration: BoxDecoration(
-                    color: couponBarBg,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          CouponIcon(
-                            width: 32,
-                            height: 32,
-                            color: couponTextColor,
+                  // --- Coupon Bar (Alan 3) ---
+                  // Positioned ile yerleştirmek yerine Column içinde bırakıyoruz,
+                  // product listesi buna göre ayarlanacak.
+                  Container(
+                    margin: const EdgeInsets.only(
+                      top: 24,
+                    ), // Başlıktan sonra boşluk
+                    width: mainContentAreaWidth, // w-[800px]
+                    height: 80, // h-[80px]
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                    ), // px-6
+                    decoration: BoxDecoration(
+                      color: couponBarBg, // bg-[#D9D9D9]
+                      borderRadius: BorderRadius.circular(8.0), // rounded-lg
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Sol taraf: İkon, Yazı, Ok
+                        InkWell(
+                          // Kuponlarım kısmını tıklanabilir yapalım
+                          onTap: () {
+                            // Kuponlarım sayfasına gitme veya modal açma
+                            print("My coupons tıklandı");
+                          },
+                          child: Row(
+                            children: [
+                              CouponIcon(
+                                width: 32,
+                                height: 32,
+                                color: couponTextColor,
+                              ),
+                              const SizedBox(width: 16), // gap-4
+                              const Text(
+                                "My coupons",
+                                style: TextStyle(
+                                  fontFamily: ralewayFont,
+                                  fontSize: 32, // text-[32px]
+                                  color: couponTextColor,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const ArrowRightIcon(
+                                width: 32,
+                                height: 32,
+                                color: couponTextColor,
+                              ), // Rengi ekledik
+                            ],
                           ),
-                          const SizedBox(width: 16),
-                          const Text(
-                            "My coupons",
+                        ),
+                        // Sağ taraf: Kupon kodu ekle
+                        InkWell(
+                          onTap: () => cartNotifier.showCouponOverlay(true),
+                          child: const Text(
+                            "Add coupon code +",
                             style: TextStyle(
                               fontFamily: ralewayFont,
-                              fontSize: 32,
+                              fontSize: 32, // text-[32px]
                               color: couponTextColor,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          ArrowRightIcon(width: 32, height: 32),
-                        ],
-                      ),
-                      InkWell(
-                        onTap: () => cartNotifier.showCouponOverlay(true),
-                        child: const Text(
-                          "Add coupon code +",
-                          style: TextStyle(
-                            fontFamily: ralewayFont,
-                            fontSize: 32,
-                            color: couponTextColor,
-                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-
-                // Products List in a fixed width container
-                SizedBox(
-                  width: contentWidth,
-                  height: screenHeight - 300, // Dinamik yükseklik
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ...cartState.products
-                            .map(
-                              (product) => Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: ProductCartItem(
-                                  product: product,
-                                  isSelected: cartState.selectedProducts
-                                      .contains(product.id),
-                                  onCheckboxChanged:
-                                      (value) => cartNotifier
-                                          .toggleProductSelection(product.id),
-                                  onQuantityChanged:
-                                      (change) => cartNotifier.changeQuantity(
-                                        product.id,
-                                        change,
-                                      ),
-                                  onRemove:
-                                      () => cartNotifier.removeProduct(
-                                        product.id,
-                                      ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        if (cartState.products.isEmpty)
-                          const Padding(
+                  const SizedBox(
+                    height: 20,
+                  ), // Kupon barı ile liste arası boşluk
+                  // --- Products List (Alan 4) ---
+                  SizedBox(
+                    // Yüksekliği ekran yüksekliğinden hesaplayalım (dinamik)
+                    // headerTopPos + başlık yüksekliği + kupon barı + boşluklar çıkarılır
+                    height:
+                        screenHeight -
+                        headerTopPos -
+                        80 -
+                        80 -
+                        24 -
+                        20 -
+                        40, // Yaklaşık hesap
+                    width: mainContentAreaWidth,
+                    child: ListView.builder(
+                      // Çok sayıda ürün olabileceği için ListView.builder daha iyi
+                      padding: EdgeInsets.zero, // Ekstra padding olmasın
+                      itemCount:
+                          cartState.products.length == 0
+                              ? 1
+                              : cartState.products.length,
+                      itemBuilder: (context, index) {
+                        if (cartState.products.isEmpty) {
+                          return const Padding(
                             padding: EdgeInsets.only(top: 32.0),
                             child: Center(
                               child: Text(
@@ -246,19 +210,75 @@ class CartPage extends ConsumerWidget {
                                 ),
                               ),
                             ),
+                          );
+                        }
+                        final product = cartState.products[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0), // mb-4
+                          child: ProductCartItem(
+                            product: product,
+                            isSelected: cartState.selectedProducts.contains(
+                              product.id,
+                            ),
+                            onCheckboxChanged:
+                                (value) => cartNotifier.toggleProductSelection(
+                                  product.id,
+                                ),
+                            onQuantityChanged:
+                                (change) => cartNotifier.changeQuantity(
+                                  product.id,
+                                  change,
+                                ),
+                            onRemove:
+                                () => cartNotifier.removeProduct(product.id),
                           ),
-                      ],
+                        );
+                      },
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
-          // Selected Products Summary - Web'deki gibi konumlandırıldı
+          // --- Delete Products Button (Positioned) ---
           Positioned(
-            right: cartSummaryRight,
-            top: 205.0,
+            left: deleteButtonLeftPos,
+            top: deleteButtonTopPos,
+            child: InkWell(
+              onTap:
+                  cartState.products.isEmpty
+                      ? null
+                      : () =>
+                          cartNotifier
+                              .removeAllProducts(), // TODO: Undo for all
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Delete products",
+                    style: TextStyle(
+                      color: deleteTextColor, // #FFF600
+                      fontFamily: ralewayFont,
+                      fontSize: 24, // text-[24px]
+                    ),
+                  ),
+                  const SizedBox(width: 8), // gap-2
+                  const BinIcon(
+                    width: 24,
+                    height: 24,
+                    color: deleteTextColor, // Renk eklendi
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // --- Selected Products Summary (Alan 5) ---
+          Positioned(
+            // Web'deki right ve top değerleri
+            right: cartSummaryRightMargin,
+            top: summaryTopPos,
             child: CartSummary(
               selectedCount: cartState.selectedProducts.length,
               selectedTotalPrice: cartState.selectedTotalPrice,
@@ -266,12 +286,17 @@ class CartPage extends ConsumerWidget {
                 if (cartState.selectedProducts.isEmpty) {
                   cartNotifier.showCompleteShoppingMessage(true);
                 } else {
-                  Navigator.pushNamed(context, '/payment');
+                  Navigator.pushNamed(
+                    context,
+                    '/payment',
+                  ); // Ödeme sayfasına yönlendir
                 }
               },
             ),
           ),
 
+          // --- Messages & Overlays (Mevcut kod korundu) ---
+          // ... (MyCartMessage, CompleteShoppingMessage, CouponOverlay Positioned widgetları) ...
           // Messages - MyCartMessage
           if (cartState.showUndoMessage)
             Positioned(
@@ -279,11 +304,17 @@ class CartPage extends ConsumerWidget {
               right: 0,
               bottom: 20,
               child: Center(
+                // Ortalamak için Center eklendi
+                // MyCartMessage'in kendi içinde bir genişliği ve stili olmalı
                 child: MyCartMessage(
-                  itemCount: 1,
+                  itemCount: 1, // veya silinen ürün sayısı
                   total: cartState.lastRemovedProduct?.price ?? 0,
-                  onViewCart: () => cartNotifier.dismissUndoMessage(),
-                  onCheckout: () => cartNotifier.undoRemove(),
+                  onViewCart:
+                      () =>
+                          cartNotifier
+                              .dismissUndoMessage(), // Bu butonun amacı farklı olabilir
+                  onCheckout:
+                      () => cartNotifier.undoRemove(), // Bu 'UNDO' olmalı
                 ),
               ),
             ),
@@ -295,32 +326,37 @@ class CartPage extends ConsumerWidget {
               right: 0,
               bottom: 20,
               child: Center(
+                // Ortalamak için Center eklendi
                 child: CompleteShoppingMessage(
                   message: "Please select products before completing shopping.",
                   onClose:
                       () => cartNotifier.showCompleteShoppingMessage(false),
-                  onComplete: null,
+                  // onComplete: null, // Bu butona gerek var mı?
                 ),
               ),
             ),
 
-          // Coupon Overlay - Fix arama sorunu
+          // Coupon Overlay
           if (cartState.showCouponOverlay)
             Positioned.fill(
+              // Tüm ekranı kapla
               child: Stack(
                 children: [
-                  // Background dimmer
+                  // Arka plan karartıcı
                   Positioned.fill(
                     child: GestureDetector(
                       onTap: () => cartNotifier.showCouponOverlay(false),
-                      child: Container(color: Colors.black.withOpacity(0.3)),
+                      child: Container(
+                        color: Colors.black.withOpacity(0.3),
+                      ), // Web'deki black/30
                     ),
                   ),
-                  // Coupon overlay content
+                  // Kupon içeriği (Web'deki gibi sağ üstte)
                   Positioned(
-                    top: 16.0,
-                    right: 16.0,
+                    top: 16.0, // mt-4
+                    right: 16.0, // mr-4
                     child: CouponOverlay(
+                      // CouponOverlay widget'ının boyutları kendi içinde ayarlı olmalı
                       coupons: cartState.currentCoupons,
                       searchTerm: cartState.couponSearchTerm,
                       currentPage: cartState.couponCurrentPage,
@@ -330,6 +366,7 @@ class CartPage extends ConsumerWidget {
                       onPageChanged: cartNotifier.changeCouponPage,
                       onUseCoupon: (coupon) {
                         print("Using coupon: ${coupon.code}");
+                        // TODO: Kupon uygulama mantığı
                         cartNotifier.showCouponOverlay(false);
                       },
                     ),

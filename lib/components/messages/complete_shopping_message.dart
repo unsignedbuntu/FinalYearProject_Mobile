@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 
+// Web'deki renk ve fontlar
+const Color messageBg = Color(0xFFF2F2F2);
+const Color messageTextColor = Colors.black;
+const Color messageButtonBg = Color(0xFF141414);
+const Color messageButtonText = Colors.white;
+const String ralewayFont = 'Raleway';
+const String interFont = 'Inter';
+
 class CompleteShoppingMessage extends StatelessWidget {
   final String message;
   final VoidCallback? onClose;
@@ -15,49 +23,72 @@ class CompleteShoppingMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      width: 400,
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: messageBg,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(Icons.shopping_bag, color: Colors.blue.shade700),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  message,
-                  style: TextStyle(color: Colors.blue.shade700),
+              const Text(
+                "Attention",
+                style: TextStyle(
+                  fontFamily: ralewayFont,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               if (onClose != null)
                 IconButton(
-                  icon: const Icon(Icons.close, size: 18),
-                  color: Colors.blue.shade700,
+                  icon: const Icon(Icons.close, size: 20),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                   onPressed: onClose,
                 ),
             ],
           ),
+          const SizedBox(height: 12),
+          Text(
+            message,
+            style: const TextStyle(
+              fontFamily: ralewayFont,
+              fontSize: 16,
+              color: messageTextColor,
+            ),
+          ),
+          const SizedBox(height: 16),
           if (onComplete != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8, left: 36),
+            Align(
+              alignment: Alignment.centerRight,
               child: ElevatedButton(
                 onPressed: onComplete,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade700,
+                  backgroundColor: messageButtonBg,
+                  foregroundColor: messageButtonText,
                   padding: const EdgeInsets.symmetric(
-                    vertical: 8,
+                    vertical: 12,
                     horizontal: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 child: const Text(
-                  'Complete Purchase',
-                  style: TextStyle(color: Colors.white),
+                  'Complete Shopping',
+                  style: TextStyle(fontFamily: interFont, fontSize: 16),
                 ),
               ),
             ),
