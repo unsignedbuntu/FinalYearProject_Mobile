@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project/providers/cart_provider.dart';
-import 'package:project/models/cart_models.dart';
 import 'package:project/widgets/product_cart_item.dart';
 import 'package:project/widgets/cart_summary.dart';
 import 'package:project/widgets/coupon_overlay.dart';

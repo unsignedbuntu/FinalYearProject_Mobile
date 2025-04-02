@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:project/screens/address/address.dart';
+import 'package:project/screens/address/empty_address.dart';
 import 'package:project/screens/favorites/favorites_page.dart';
+import 'package:project/screens/my_reviews/my_reviews_page.dart';
+import 'package:project/screens/user_info/user_info_page.dart';
 import 'presentation/pages/home_page.dart';
 import 'presentation/pages/profile_page.dart';
 import 'presentation/pages/splash_screen.dart';
@@ -55,19 +59,18 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LandingPage(),
         '/splash': (context) => const SplashScreen(),
         '/home': (context) => const HomePage(),
-        '/cart': (context) => const CartPage(),
+        CartPage.routeName: (context) => const CartPage(),
         '/profile': (context) => const ProfilePage(),
-        '/favorites': (context) => const FavoritesPage(),
-        '/favorites/edit': (context) => const EditListPage(),
-
+        FavoritesPage.routeName: (context) => const FavoritesPage(),
+        EditListPage.routeName: (context) => const EditListPage(),
+        AddAddressPage.routeName: (context) => const AddAddressPage(),
+        EmptyAddressPage.routeName: (context) => const EmptyAddressPage(),
+        MyReviewsPage.routeName: (context) => const MyReviewsPage(),
         '/discount-coupons':
             (context) => const PlaceholderPage(title: 'My Discount Coupons'),
         '/my-followed-stores':
             (context) => const PlaceholderPage(title: 'My Followed Stores'),
-        '/user-info':
-            (context) => const PlaceholderPage(title: 'My User Information'),
-        '/address-info':
-            (context) => const PlaceholderPage(title: 'My Address Information'),
+        UserInfoPage.routeName: (context) => const UserInfoPage(),
         '/payment': (context) => const PlaceholderPage(title: 'Payment'),
       },
     );

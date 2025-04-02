@@ -7,8 +7,10 @@ import 'package:project/components/icons/user_inf_sidebar.dart';
 import 'package:project/components/icons/address.dart';
 import 'package:project/components/icons/favorite_sidebar.dart';
 import 'package:project/components/icons/ktun_gpt.dart';
+import 'package:project/screens/address/address.dart';
 import 'package:project/screens/cart/cart_page.dart';
 import 'package:project/screens/favorites/favorites_page.dart';
+import 'package:project/screens/user_info/user_info_page.dart';
 
 // Define colors (Web kodundan alınanlar ve mevcutlar)
 const Color sidebarBg = Color(0xFFF8F8F8);
@@ -255,7 +257,7 @@ class Sidebar extends StatelessWidget {
                   buildClickableItem(
                     icon: const UserInfSidebarIcon(width: 37, height: 37),
                     text: "My user information",
-                    routeName: '/user-info', // Rota adını tanımla
+                    routeName: UserInfoPage.routeName, // Rota adını tanımla
                     currentPath: currentPath,
                     iconActualWidth: 37,
                     iconActualHeight: 37,
@@ -268,7 +270,7 @@ class Sidebar extends StatelessWidget {
                       color: defaultTextColor,
                     ),
                     text: "My address information",
-                    routeName: '/address-info', // Rota adını tanımla
+                    routeName: AddAddressPage.routeName, // Rota adını tanımla
                     currentPath: currentPath,
                     iconActualWidth: 37,
                     iconActualHeight: 37,

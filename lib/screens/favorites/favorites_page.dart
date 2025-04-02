@@ -4,7 +4,6 @@ import 'package:project/screens/favorites/empty_favorites.dart';
 import 'package:project/components/messages/favorites_header.dart';
 import 'package:project/components/icons/arrowdown.dart';
 import 'package:project/components/messages/cart_success_message.dart';
-import 'package:project/components/messages/favorite_lists.dart';
 import 'package:project/models/product.dart'; // Ana Product modelini import edelim
 import 'package:project/components/icons/menu.dart';
 import 'package:project/components/icons/cart_favorites.dart';
@@ -91,6 +90,56 @@ class _FavoritesPageState extends State<FavoritesPage> {
       inStock: true,
       addedDate: DateTime(2024, 1, 2),
     ),
+    FavoriteProduct(
+      id: 3,
+      name: "Adidas Superstar",
+      price: 399.99,
+      imageUrl: "", // Empty URL for placeholder
+      isActive: true,
+      createdAt: DateTime(2024, 1, 3),
+      inStock: true,
+      addedDate: DateTime(2024, 1, 3),
+    ),
+    FavoriteProduct(
+      id: 4,
+      name: "Adidas Superstar",
+      price: 399.99,
+      imageUrl: "", // Empty URL for placeholder
+      isActive: true,
+      createdAt: DateTime(2024, 1, 4),
+      inStock: true,
+      addedDate: DateTime(2024, 1, 4),
+    ),
+    FavoriteProduct(
+      id: 5,
+      name: "Adidas Superstar",
+      price: 399.99,
+      imageUrl: "", // Empty URL for placeholder
+      isActive: true,
+      createdAt: DateTime(2024, 1, 5),
+      inStock: true,
+      addedDate: DateTime(2024, 1, 5),
+    ),
+    FavoriteProduct(
+      id: 6,
+      name: "Adidas Superstar",
+      price: 399.99,
+      imageUrl: "", // Empty URL for placeholder
+      isActive: true,
+      createdAt: DateTime(2024, 1, 5),
+      inStock: true,
+      addedDate: DateTime(2024, 1, 5),
+    ),
+    FavoriteProduct(
+      id: 7,
+      name: "Adidas Superstar",
+      price: 399.99,
+      imageUrl: "", // Empty URL for placeholder
+      isActive: true,
+      createdAt: DateTime(2024, 1, 5),
+      inStock: true,
+      addedDate: DateTime(2024, 1, 5),
+    ),
   ];
 
   // Sıralama fonksiyonu
@@ -134,7 +183,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         _showCartSuccess = false;
-        _showListSelection = true;
+        // _showListSelection = true; // You might need this later
       });
     });
   }
@@ -188,25 +237,34 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 children: [
                   const SizedBox(height: 30),
 
-                  // Başlık ve Sıralama Bölümü
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: FavoritesHeader(
-                          itemCount: _favoriteProducts.length,
-                          onClearAll: () {
-                            setState(() {
-                              _favoriteProducts.clear();
-                            });
-                          },
+                  // Başlık ve Sıralama Bölümü (Header now Flexible)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Wrap FractionallySizedBox in Flexible to constrain width properly
+                        Flexible(
+                          child: FractionallySizedBox(
+                            widthFactor:
+                                0.7, // Adjust this factor (e.g., 0.6 for 60%)
+                            alignment: Alignment.centerLeft,
+                            child: FavoritesHeader(
+                              itemCount: _favoriteProducts.length,
+                              onClearAll: () {
+                                setState(() {
+                                  _favoriteProducts.clear();
+                                });
+                              },
+                            ),
+                          ),
                         ),
-                      ),
-
-                      // Sıralama Bölümü
-                      Padding(
-                        padding: const EdgeInsets.only(right: 470),
-                        child: Row(
+                        const SizedBox(
+                          width: 50,
+                        ), // Keep space between header and Sort section
+                        // Sort section (remains the same)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             const Text(
                               "Sort",
@@ -216,120 +274,122 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
-                            const SizedBox(width: 32),
-
-                            // Sıralama Butonu
-                            PopupMenuButton<String>(
-                              offset: const Offset(
-                                0,
-                                15,
-                              ), // Butonun hemen altında açılması için
-                              onSelected: (value) {
-                                _handleSort(value);
-                                setState(() {
-                                  _isSortOpen = false;
-                                });
-                              },
-                              onCanceled: () {
-                                setState(() {
-                                  _isSortOpen = false;
-                                });
-                              },
-                              itemBuilder:
-                                  (context) => [
-                                    PopupMenuItem(
-                                      value: 'default',
-                                      child: _buildSortMenuItem(
-                                        'default',
-                                        'Default',
+                            const SizedBox(width: 15),
+                            Container(
+                              width: 200,
+                              height: 75,
+                              child: PopupMenuButton<String>(
+                                offset: const Offset(0, 75),
+                                onSelected: (value) {
+                                  _handleSort(value);
+                                  setState(() {
+                                    _isSortOpen = false;
+                                  });
+                                },
+                                onCanceled: () {
+                                  setState(() {
+                                    _isSortOpen = false;
+                                  });
+                                },
+                                itemBuilder:
+                                    (context) => [
+                                      PopupMenuItem(
+                                        value: 'default',
+                                        child: _buildSortMenuItem(
+                                          'default',
+                                          'Default',
+                                        ),
                                       ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'price-high',
-                                      child: _buildSortMenuItem(
-                                        'price-high',
-                                        'Price (High-Low)',
+                                      PopupMenuItem(
+                                        value: 'price-high',
+                                        child: _buildSortMenuItem(
+                                          'price-high',
+                                          'Price (High-Low)',
+                                        ),
                                       ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'price-low',
-                                      child: _buildSortMenuItem(
-                                        'price-low',
-                                        'Price (Low-High)',
+                                      PopupMenuItem(
+                                        value: 'price-low',
+                                        child: _buildSortMenuItem(
+                                          'price-low',
+                                          'Price (Low-High)',
+                                        ),
                                       ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'newest',
-                                      child: _buildSortMenuItem(
-                                        'newest',
-                                        'Newest First',
+                                      PopupMenuItem(
+                                        value: 'newest',
+                                        child: _buildSortMenuItem(
+                                          'newest',
+                                          'Newest First',
+                                        ),
                                       ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'oldest',
-                                      child: _buildSortMenuItem(
-                                        'oldest',
-                                        'Oldest First',
+                                      PopupMenuItem(
+                                        value: 'oldest',
+                                        child: _buildSortMenuItem(
+                                          'oldest',
+                                          'Oldest First',
+                                        ),
                                       ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'name-asc',
-                                      child: _buildSortMenuItem(
-                                        'name-asc',
-                                        'Name (A-Z)',
+                                      PopupMenuItem(
+                                        value: 'name-asc',
+                                        child: _buildSortMenuItem(
+                                          'name-asc',
+                                          'Name (A-Z)',
+                                        ),
                                       ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'name-desc',
-                                      child: _buildSortMenuItem(
-                                        'name-desc',
-                                        'Name (Z-A)',
+                                      PopupMenuItem(
+                                        value: 'name-desc',
+                                        child: _buildSortMenuItem(
+                                          'name-desc',
+                                          'Name (Z-A)',
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                              child: Container(
-                                width: 200,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFD9D9D9),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      _getSortTypeName(),
-                                      style: const TextStyle(
-                                        fontFamily: 'Inter',
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.normal,
+                                    ],
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFD9D9D9),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          _getSortTypeName(),
+                                          style: const TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.normal,
+                                            color: Color(0xFFFF8800),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const ArrowdownIcon(
+                                        width: 13,
+                                        height: 8,
                                         color: Color(0xFFFF8800),
                                       ),
-                                    ),
-                                    const ArrowdownIcon(
-                                      width: 13,
-                                      height: 8,
-                                      color: Color(0xFFFF8800),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
 
                   // Ana İçerik Alanı
                   Container(
-                    width: 1000,
-                    height: 750,
-                    margin: const EdgeInsets.only(top: 16),
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 30.0,
+                      vertical: 16.0,
+                    ),
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -338,65 +398,78 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Filtre Butonları
+                        // Filtre Butonları ve Edit Butonu (Yeniden Konumlandırıldı)
                         Row(
                           children: [
-                            OutlinedButton(
-                              onPressed: () {
-                                setState(() {
-                                  _showInStock = true;
-                                });
-                              },
-                              style: OutlinedButton.styleFrom(
-                                minimumSize: const Size(140, 50),
-                                side: BorderSide(
-                                  color:
+                            // In stock button
+                            SizedBox(
+                              width: 140 * 1.6,
+                              height: 50,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _showInStock = true;
+                                  });
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: Size(140 * 1.6, 50),
+                                  side: BorderSide(
+                                    color:
+                                        _showInStock
+                                            ? const Color(0xFFFF8800)
+                                            : Colors.grey.shade300,
+                                  ),
+                                  foregroundColor:
                                       _showInStock
                                           ? const Color(0xFFFF8800)
-                                          : Colors.grey.shade300,
+                                          : Colors.grey.shade600,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
-                                foregroundColor:
-                                    _showInStock
-                                        ? const Color(0xFFFF8800)
-                                        : Colors.grey.shade600,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                child: const Text(
+                                  "In stock",
+                                  style: TextStyle(fontSize: 16),
                                 ),
-                              ),
-                              child: const Text(
-                                "In stock",
-                                style: TextStyle(fontSize: 16),
                               ),
                             ),
                             const SizedBox(width: 16),
-                            OutlinedButton(
-                              onPressed: () {
-                                setState(() {
-                                  _showInStock = false;
-                                });
-                              },
-                              style: OutlinedButton.styleFrom(
-                                minimumSize: const Size(160, 50),
-                                side: BorderSide(
-                                  color:
+                            // Out of stock button
+                            SizedBox(
+                              width: 160 * 1.6,
+                              height: 50,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _showInStock = false;
+                                  });
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: Size(160 * 1.6, 50),
+                                  side: BorderSide(
+                                    color:
+                                        !_showInStock
+                                            ? const Color(0xFFFF8800)
+                                            : Colors.grey.shade300,
+                                  ),
+                                  foregroundColor:
                                       !_showInStock
                                           ? const Color(0xFFFF8800)
-                                          : Colors.grey.shade300,
+                                          : Colors.grey.shade600,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
-                                foregroundColor:
-                                    !_showInStock
-                                        ? const Color(0xFFFF8800)
-                                        : Colors.grey.shade600,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                child: const Text(
+                                  "Out of stock",
+                                  style: TextStyle(fontSize: 16),
                                 ),
-                              ),
-                              child: const Text(
-                                "Out of stock",
-                                style: TextStyle(fontSize: 16),
                               ),
                             ),
-                            const SizedBox(width: 110),
+                            const SizedBox(
+                              width: 50,
+                            ), // Adjust space before Edit button
+                            // Edit Button (Positioned closer to middle)
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.pushNamed(context, '/favorites/edit');
@@ -420,38 +493,20 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           ],
                         ),
 
-                        // Ürün Gridi
+                        // Ürün Gridi (crossAxisCount: 5)
                         const SizedBox(height: 25),
-                        Expanded(child: _buildProductGrid()),
+                        _buildProductGrid(),
                       ],
                     ),
                   ),
 
-                  // Favori listeleri
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: FavoriteLists(
-                      items:
-                          _favoriteProducts
-                              .map(
-                                (p) => FavoriteItem(
-                                  id: p.id.toString(),
-                                  name: p.name,
-                                  imageUrl: p.imageUrl ?? '',
-                                  price: p.price,
-                                ),
-                              )
-                              .toList(),
-                      onRemove: _handleRemoveProduct,
-                      onViewProduct: _handleViewProduct,
-                    ),
-                  ),
+                  const SizedBox(height: 50), // Bottom padding
                 ],
               ),
             ),
           ),
 
-          // Overlay Bileşenleri
+          // Overlay Components
           if (_showCartSuccess)
             Positioned(
               left: 0,
@@ -500,34 +555,49 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget _buildSortMenuItem(String type, String label) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      color: _sortType == type ? const Color(0xFFF5F5F5) : Colors.transparent,
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      color: _sortType == type ? Colors.grey.shade200 : Colors.transparent,
       child: Text(
         label,
         style: TextStyle(
           fontSize: 16,
           fontWeight: _sortType == type ? FontWeight.bold : FontWeight.normal,
-          color: _sortType == type ? const Color(0xFFFF8800) : Colors.black,
+          color: _sortType == type ? const Color(0xFFFF8800) : Colors.black87,
         ),
       ),
     );
   }
 
-  // Ürün grid'i oluştur
+  // Ürün grid'i oluştur (crossAxisCount: 5)
   Widget _buildProductGrid() {
-    // Sadece stokta olanları veya olmayanları filtrele
     final filteredProducts =
         _favoriteProducts
             .where((p) => _showInStock ? p.inStock : !p.inStock)
             .toList();
 
-    // 2x4 grid
+    if (filteredProducts.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 40.0),
+          child: Text(
+            _showInStock
+                ? 'No favorite products currently in stock.'
+                : 'No favorite products currently out of stock.',
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
     return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
+        crossAxisCount: 5, // Changed to 5
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 1, // Kare ürünler
+        childAspectRatio: 0.8,
       ),
       itemCount: filteredProducts.length,
       itemBuilder: (context, index) {
@@ -543,12 +613,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: Colors.white,
+        border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 0,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -557,43 +628,65 @@ class _FavoritesPageState extends State<FavoritesPage> {
         children: [
           // Ürün Resmi ve Menü
           Expanded(
+            flex: 3,
             child: Stack(
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD9D9D9),
+                    color: const Color(0xFFF0F0F0),
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(8),
                     ),
+                    image:
+                        product.imageUrl != null &&
+                                product.imageUrl!.isNotEmpty &&
+                                !product.imageUrl!.startsWith('/')
+                            ? DecorationImage(
+                              image: NetworkImage(product.imageUrl!),
+                              fit: BoxFit.cover,
+                              onError: (exception, stackTrace) {
+                                print("Image Load Error: $exception");
+                              },
+                            )
+                            : null,
                   ),
                   width: double.infinity,
                   child:
-                      product.imageUrl == null ||
-                              product.imageUrl!.startsWith('/')
+                      (product.imageUrl == null ||
+                              product.imageUrl!.isEmpty ||
+                              product.imageUrl!.startsWith('/'))
                           ? Center(
-                            child: Text('Image: ${product.imageUrl ?? "None"}'),
+                            child: Icon(
+                              Icons.image_not_supported,
+                              size: 40,
+                              color: Colors.grey.shade500,
+                            ),
                           )
-                          : Image.network(
-                            product.imageUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Center(
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  size: 32,
-                                ),
-                              );
-                            },
-                          ),
+                          : null,
                 ),
                 Positioned(
                   top: 8,
                   right: 8,
                   child: InkWell(
                     onTap: () {
-                      // Menu göster
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Menu tapped for ${product.name}'),
+                        ),
+                      );
                     },
-                    child: MenuIcon(width: 20, height: 20, color: Colors.black),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        shape: BoxShape.circle,
+                      ),
+                      child: MenuIcon(
+                        width: 16,
+                        height: 16,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -601,46 +694,53 @@ class _FavoritesPageState extends State<FavoritesPage> {
           ),
 
           // Ürün Bilgileri
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name,
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF223263),
+          Expanded(
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    product.name,
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF223263),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "${product.price.toStringAsFixed(2)} TL",
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF40BFFF),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "${product.price.toStringAsFixed(2)} TL",
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF40BFFF),
+                        ),
                       ),
-                    ),
-                    InkWell(
-                      onTap: _handleCartSuccess,
-                      child: CartFavoritesIcon(
-                        width: 20,
-                        height: 20,
-                        color: const Color(0xFF40BFFF),
+                      InkWell(
+                        onTap: _handleCartSuccess,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          child: CartFavoritesIcon(
+                            width: 20,
+                            height: 20,
+                            color: const Color(0xFF40BFFF),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

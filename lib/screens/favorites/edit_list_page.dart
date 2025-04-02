@@ -57,17 +57,24 @@ class EditListPage extends StatefulWidget {
 class _EditListPageState extends State<EditListPage> {
   int _selectedCount = 0;
   bool _isAllSelected = false;
-  List<Map<String, dynamic>> _products = [];
+  List<ProductWithSelection> _products = [];
   bool _showDeleteConfirm = false;
   bool _showInStock = true;
 
   @override
   void initState() {
     super.initState();
-    // Web version gibi 8 ürün oluşturalım
+    // Example data using ProductWithSelection
     _products = List.generate(
       8,
-      (index) => {'id': index + 1, 'selected': false},
+      (index) => ProductWithSelection(
+        id: index + 1,
+        name: 'Product ${index + 1}',
+        price: (index + 1) * 10.0,
+        isActive: true,
+        createdAt: DateTime.now(),
+        selected: false,
+      ),
     );
   }
 
@@ -76,23 +83,20 @@ class _EditListPageState extends State<EditListPage> {
     setState(() {
       _isAllSelected = newIsAllSelected;
       for (var product in _products) {
-        product['selected'] = newIsAllSelected;
+        product.selected = newIsAllSelected;
       }
       _selectedCount = newIsAllSelected ? _products.length : 0;
     });
   }
 
   void _handleSelectProduct(int productId) {
-    final productIndex = _products.indexWhere((p) => p['id'] == productId);
+    final productIndex = _products.indexWhere((p) => p.id == productId);
     if (productIndex != -1) {
       setState(() {
-        _products[productIndex]['selected'] =
-            !_products[productIndex]['selected'];
+        _products[productIndex].selected = !_products[productIndex].selected;
 
         // Update selected count and isAllSelected
-        final updatedProducts = List<Map<String, dynamic>>.from(_products);
-        _selectedCount =
-            updatedProducts.where((p) => p['selected'] == true).length;
+        _selectedCount = _products.where((p) => p.selected).length;
         _isAllSelected =
             _selectedCount == _products.length && _products.isNotEmpty;
       });
@@ -100,8 +104,7 @@ class _EditListPageState extends State<EditListPage> {
   }
 
   void _handleDelete() {
-    final selectedProducts =
-        _products.where((p) => p['selected'] == true).toList();
+    final selectedProducts = _products.where((p) => p.selected).toList();
     if (selectedProducts.isNotEmpty) {
       setState(() {
         _showDeleteConfirm = true;
@@ -111,7 +114,7 @@ class _EditListPageState extends State<EditListPage> {
 
   void _handleConfirmDelete() {
     setState(() {
-      _products.removeWhere((p) => p['selected'] == true);
+      _products.removeWhere((p) => p.selected);
       _selectedCount = 0;
       _isAllSelected = false;
       _showDeleteConfirm = false;
@@ -130,7 +133,7 @@ class _EditListPageState extends State<EditListPage> {
           Positioned(
             left: 480, // ml-[480px]
             top: 160, // pt-[160px]
-            right: 0,
+            right: 30, // Add some right padding
             bottom: 0,
             child: SingleChildScrollView(
               child: Padding(
@@ -161,160 +164,79 @@ class _EditListPageState extends State<EditListPage> {
                       ),
                     ),
 
-                    // Filtre Butonları ve Seçim Bildirimi
+                    // Filter Buttons Row
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // In stock button
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 140, // w-[140px]
-                              height: 50, // h-[50px]
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _showInStock = true;
-                                  });
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(
-                                    color:
-                                        _showInStock
-                                            ? const Color(0xFFFF8800)
-                                            : Colors.grey.shade300,
-                                  ),
-                                  foregroundColor:
-                                      _showInStock
-                                          ? const Color(0xFFFF8800)
-                                          : Colors.grey.shade600,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      8,
-                                    ), // rounded-lg
-                                  ),
-                                ),
-                                child: const Text(
-                                  'In stock',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 16, // text-[16px]
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(width: 16), // ml-4
-                            // Out of stock button
-                            SizedBox(
-                              width: 160, // w-[160px]
-                              height: 50, // h-[50px]
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _showInStock = false;
-                                  });
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(
-                                    color:
-                                        !_showInStock
-                                            ? const Color(0xFFFF8800)
-                                            : Colors.grey.shade300,
-                                  ),
-                                  foregroundColor:
-                                      !_showInStock
-                                          ? const Color(0xFFFF8800)
-                                          : Colors.grey.shade600,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      8,
-                                    ), // rounded-lg
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Out of stock',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 16, // text-[16px]
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // Seçim Metni
-                        Text(
-                          _selectedCount == 0
-                              ? "No product selected"
-                              : "$_selectedCount product${_selectedCount > 1 ? 's' : ''} selected",
-                          style: const TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 24, // text-[24px]
-                            color: Color(0xFFFF0000), // text-[#FF0000]
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Delete ve Move butonları (yeni pozisyon)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        // Delete Selected Button
                         SizedBox(
-                          width: 200, // w-[200px]
-                          height: 60, // h-[60px]
-                          child: ElevatedButton(
-                            onPressed: _handleDelete,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(
-                                0xFFFF7300,
-                              ), // Orange
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  10,
-                                ), // rounded-[10px]
-                              ),
-                              elevation: 3,
-                            ),
-                            child: const Text(
-                              'Delete',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 24, // text-[24px]
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // Move Selected Button
-                        SizedBox(
-                          width: 200, // w-[200px]
-                          height: 60, // h-[60px]
-                          child: ElevatedButton(
+                          width: 140, // w-[140px]
+                          height: 50, // h-[50px]
+                          child: OutlinedButton(
                             onPressed: () {
-                              // Handle move selected
+                              setState(() {
+                                _showInStock = true;
+                              });
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF8F8F8F), // Gray
-                              foregroundColor: Colors.white,
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                color:
+                                    _showInStock
+                                        ? const Color(0xFFFF8800)
+                                        : Colors.grey.shade300,
+                              ),
+                              foregroundColor:
+                                  _showInStock
+                                      ? const Color(0xFFFF8800)
+                                      : Colors.grey.shade600,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
-                                  10,
-                                ), // rounded-[10px]
+                                  8,
+                                ), // rounded-lg
                               ),
-                              elevation: 3,
                             ),
                             child: const Text(
-                              'Move',
+                              'In stock',
                               style: TextStyle(
                                 fontFamily: 'Inter',
-                                fontSize: 24, // text-[24px]
+                                fontSize: 16, // text-[16px]
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 16), // ml-4
+                        // Out of stock button
+                        SizedBox(
+                          width: 160, // w-[160px]
+                          height: 50, // h-[50px]
+                          child: OutlinedButton(
+                            onPressed: () {
+                              setState(() {
+                                _showInStock = false;
+                              });
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                color:
+                                    !_showInStock
+                                        ? const Color(0xFFFF8800)
+                                        : Colors.grey.shade300,
+                              ),
+                              foregroundColor:
+                                  !_showInStock
+                                      ? const Color(0xFFFF8800)
+                                      : Colors.grey.shade600,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  8,
+                                ), // rounded-lg
+                              ),
+                            ),
+                            child: const Text(
+                              'Out of stock',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 16, // text-[16px]
                               ),
                             ),
                           ),
@@ -324,31 +246,190 @@ class _EditListPageState extends State<EditListPage> {
 
                     const SizedBox(height: 20),
 
-                    // Choose All checkbox
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        InkWell(
-                          onTap: _handleSelectAll,
-                          child: Row(
+                    // Action Buttons and Selection Status (Web Layout)
+                    Container(
+                      width: 1000, // Ensure container takes sufficient width
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Selection Status Text
+                          Text(
+                            _selectedCount == 0
+                                ? "No product selected"
+                                : "$_selectedCount product${_selectedCount > 1 ? 's' : ''} selected",
+                            style: const TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 24, // text-[24px]
+                              color: Color(0xFFFF0000), // text-[#FF0000]
+                            ),
+                          ),
+
+                          // Right side actions
+                          Row(
                             children: [
-                              CheckboxIcon(
-                                checked: _isAllSelected,
-                                size: 25, // size={25}
-                                onTap: _handleSelectAll,
+                              // Delete Selected Button (Web Style Applied)
+                              SizedBox(
+                                width: 185, // w-[185px]
+                                height: 50, // h-[50px]
+                                child: ElevatedButton(
+                                  onPressed: _handleDelete,
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.resolveWith<
+                                          Color?
+                                        >((Set<MaterialState> states) {
+                                          if (states.contains(
+                                            MaterialState.hovered,
+                                          ))
+                                            return const Color(
+                                              0xFFFF9500,
+                                            ); // Hover color
+                                          return const Color(
+                                            0xFFD9D9D9,
+                                          ); // Default color
+                                        }),
+                                    foregroundColor:
+                                        MaterialStateProperty.resolveWith<
+                                          Color?
+                                        >((Set<MaterialState> states) {
+                                          if (states.contains(
+                                            MaterialState.hovered,
+                                          ))
+                                            return const Color(
+                                              0xFF00F6FF,
+                                            ); // Hover text color
+                                          return Colors
+                                              .black; // Default text color
+                                        }),
+                                    shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder
+                                    >(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          10.0,
+                                        ),
+                                        side: const BorderSide(
+                                          width: 2,
+                                          color: Colors.black,
+                                        ), // Default border color black
+                                      ),
+                                    ),
+                                    elevation: MaterialStateProperty.all(
+                                      0,
+                                    ), // No elevation
+                                    padding: MaterialStateProperty.all(
+                                      EdgeInsets.symmetric(horizontal: 8),
+                                    ), // Adjust padding if needed
+                                  ),
+                                  child: const Text(
+                                    'Delete selected',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 20, // Reduced font size
+                                    ),
+                                  ),
+                                ),
                               ),
-                              const SizedBox(width: 8), // gap-2
-                              Text(
-                                "Choose all (${_selectedCount})",
-                                style: const TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 24, // text-[24px]
+
+                              const SizedBox(
+                                width: 15,
+                              ), // Space between buttons
+                              // Move Selected Button (Web Style Applied)
+                              SizedBox(
+                                width: 185, // w-[185px]
+                                height: 50, // h-[50px]
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Handle move selected
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.resolveWith<
+                                          Color?
+                                        >((Set<MaterialState> states) {
+                                          if (states.contains(
+                                            MaterialState.hovered,
+                                          ))
+                                            return const Color(
+                                              0xFFFF0048,
+                                            ); // Hover color
+                                          return const Color(
+                                            0xFF8F8F8F,
+                                          ); // Default color
+                                        }),
+                                    foregroundColor:
+                                        MaterialStateProperty.resolveWith<
+                                          Color?
+                                        >((Set<MaterialState> states) {
+                                          if (states.contains(
+                                            MaterialState.hovered,
+                                          ))
+                                            return const Color(
+                                              0xFF00F6FF,
+                                            ); // Hover text color
+                                          return Colors
+                                              .white; // Default text color
+                                        }),
+                                    shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder
+                                    >(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          10.0,
+                                        ),
+                                        side: const BorderSide(
+                                          width: 2,
+                                          color: Colors.black,
+                                        ), // Default border color black
+                                      ),
+                                    ),
+                                    elevation: MaterialStateProperty.all(
+                                      0,
+                                    ), // No elevation
+                                    padding: MaterialStateProperty.all(
+                                      EdgeInsets.symmetric(horizontal: 8),
+                                    ), // Adjust padding if needed
+                                  ),
+                                  child: const Text(
+                                    'Move selected',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 20, // Reduced font size
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(
+                                width: 30,
+                              ), // Space before checkbox
+                              // Choose All checkbox
+                              InkWell(
+                                onTap: _handleSelectAll,
+                                child: Row(
+                                  children: [
+                                    CheckboxIcon(
+                                      checked: _isAllSelected,
+                                      size: 25, // size={25}
+                                      onTap: _handleSelectAll,
+                                    ),
+                                    const SizedBox(width: 8), // gap-2
+                                    Text(
+                                      "Choose all (${_selectedCount})",
+                                      style: const TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 24, // text-[24px]
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
 
                     const SizedBox(height: 20),
@@ -356,7 +437,7 @@ class _EditListPageState extends State<EditListPage> {
                     // Main content area (white box)
                     Container(
                       width: 1000, // w-[1000px]
-                      height: 750, // h-[750px]
+                      // Removed fixed height to allow content growth
                       margin: const EdgeInsets.only(top: 16), // mt-4
                       padding: const EdgeInsets.all(24), // p-6
                       decoration: BoxDecoration(
@@ -364,12 +445,17 @@ class _EditListPageState extends State<EditListPage> {
                         borderRadius: BorderRadius.circular(8), // rounded-lg
                       ),
                       child: GridView.builder(
+                        shrinkWrap:
+                            true, // Important for GridView inside SingleChildScrollView
+                        physics:
+                            const NeverScrollableScrollPhysics(), // Disable GridView scrolling
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4, // grid-cols-4
+                              crossAxisCount: 5, // Changed to 5
                               crossAxisSpacing: 24, // gap-6
                               mainAxisSpacing: 24, // gap-6
-                              childAspectRatio: 1, // Square items
+                              childAspectRatio:
+                                  0.8, // Adjust aspect ratio for 5 items
                             ),
                         itemCount: _products.length,
                         itemBuilder: (context, index) {
@@ -391,15 +477,13 @@ class _EditListPageState extends State<EditListPage> {
                                   left: 8, // left-2
                                   child: InkWell(
                                     onTap:
-                                        () =>
-                                            _handleSelectProduct(product['id']),
+                                        () => _handleSelectProduct(product.id),
                                     child: CheckboxIcon(
-                                      checked: product['selected'],
+                                      checked: product.selected,
                                       size: 25, // size={25}
                                       onTap:
-                                          () => _handleSelectProduct(
-                                            product['id'],
-                                          ),
+                                          () =>
+                                              _handleSelectProduct(product.id),
                                     ),
                                   ),
                                 ),
@@ -435,6 +519,7 @@ class _EditListPageState extends State<EditListPage> {
                         },
                       ),
                     ),
+                    const SizedBox(height: 50), // Add some bottom padding
                   ],
                 ),
               ),
