@@ -6,6 +6,8 @@ import 'package:project/widgets/contact_form.dart'; // Form widget'ını import 
 class SupportPage extends StatefulWidget {
   const SupportPage({super.key});
 
+  static const String routeName = '/support';
+
   @override
   State<SupportPage> createState() => _SupportPageState();
 }
@@ -17,7 +19,6 @@ class _SupportPageState extends State<SupportPage> {
     'service': -1,
     'resource': -1,
   };
-
   // Öğe tıklama olayını yöneten fonksiyon
   void _handleClick(String section, int index) {
     setState(() {

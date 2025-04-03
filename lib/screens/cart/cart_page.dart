@@ -10,6 +10,7 @@ import 'package:project/components/icons/arrow_right.dart';
 import 'package:project/components/icons/bin.dart';
 import 'package:project/components/messages/my_cart_message.dart'; // Gerekliyse import
 import 'package:project/components/messages/complete_shopping_message.dart'; // Gerekliyse import
+import 'package:project/screens/payment/payment_page.dart'; // PaymentPage importu
 
 // Define colors and fonts
 const Color couponBarBg = Color(0xFFD9D9D9); // #D9D9D9
@@ -285,10 +286,8 @@ class CartPage extends ConsumerWidget {
                 if (cartState.selectedProducts.isEmpty) {
                   cartNotifier.showCompleteShoppingMessage(true);
                 } else {
-                  Navigator.pushNamed(
-                    context,
-                    '/payment',
-                  ); // Ödeme sayfasına yönlendir
+                  // Ödeme sayfasına yönlendir (routeName ile)
+                  Navigator.pushNamed(context, PaymentPage.routeName);
                 }
               },
             ),

@@ -4,25 +4,18 @@ import 'package:flutter_svg/flutter_svg.dart';
 class TicketIcon extends StatelessWidget {
   final double width;
   final double height;
-  final Color color;
   final VoidCallback? onTap;
 
   const TicketIcon({
     super.key,
-    this.width = 24,
-    this.height = 24,
-    this.color = Colors.black,
+    this.width = 380,
+    this.height = 180,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final svgIcon = SvgPicture.string(
-      svgString,
-      width: width,
-      height: height,
-      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-    );
+    final svgIcon = SvgPicture.string(svgString, width: width, height: height);
 
     if (onTap != null) {
       return InkWell(
@@ -36,18 +29,17 @@ class TicketIcon extends StatelessWidget {
   }
 
   static const String svgString = '''
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_1036_77)">
-<path d="M11 4H7V20H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M13 20H17V4H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M17 9H20V15H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M7 15H4V9H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
-<defs>
-<clipPath id="clip0_1036_77">
-<rect width="24" height="24" fill="white"/>
-</clipPath>
-</defs>
+<svg 
+  width="380" 
+  height="180" 
+  viewBox="0 0 380 180" 
+  fill="none" 
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path 
+    d="M0 20C0 8.95431 8.95431 0 20 0H360C371.046 0 380 8.95431 380 20V160C380 171.046 371.046 180 360 180H20C8.95431 180 0 171.046 0 160V20Z" 
+    fill="#FF9D00"
+  />
 </svg>
   ''';
 }

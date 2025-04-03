@@ -205,13 +205,7 @@ class _CouponOverlayState extends State<CouponOverlay> {
       child: Stack(
         children: [
           // Using the Ticket SVG component as background
-          Positioned.fill(
-            child: TicketIcon(
-              width: 342,
-              height: 104,
-              color: Colors.grey.withOpacity(0.1),
-            ),
-          ),
+          Positioned.fill(child: TicketIcon(width: 342, height: 104)),
 
           // Coupon Content
           Padding(

@@ -237,25 +237,19 @@ class _NavigationBarState extends State<NavigationBar> {
             // Support butonu özel olarak ele alınıyor
             if (index == 3) {
               // Support Butonu
-              print("Navigating to Support Page (Using MaterialPageRoute)");
-
-              // --- YÖNTEM 2: MaterialPageRoute Kullanımı (Doğrudan Widget) ---
-              // SupportPage'i import ettiğimizden emin olmalıyız (yukarıda yapıldı)
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SupportPage()),
+              print(
+                "Navigating to Support Page (Using routeName: ${SupportPage.routeName})",
               );
 
-              // Yöntem 1 (Named Routes) kullanılıyorsa, bu satırı yorumda bırakın:
-              // final routes = ['/stores', '/loyalty-program', '/ktungpt', '/support'];
-              // Navigator.pushNamed(context, routes[index]);
+              // Named Route Kullanımı
+              Navigator.pushNamed(context, SupportPage.routeName);
             } else {
               // Diğer rotalar (Loyalty, KtunGPT) - Şimdilik sadece print
               final routes = [
                 '/stores',
                 '/loyalty-program',
                 '/ktungpt',
-                '/support',
+                SupportPage.routeName,
               ];
               print("Navigating to ${routes[index]} (Not implemented yet)");
               // Gerekirse bu rotalar için de yönlendirme ekleyebilirsiniz:

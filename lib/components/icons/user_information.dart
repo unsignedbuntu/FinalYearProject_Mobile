@@ -17,12 +17,7 @@ class UserInformationIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final svgIcon = SvgPicture.string(
-      svgString,
-      width: width,
-      height: height,
-      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-    );
+    final svgIcon = SvgPicture.string(svgString, width: width, height: height);
 
     if (onTap != null) {
       return InkWell(

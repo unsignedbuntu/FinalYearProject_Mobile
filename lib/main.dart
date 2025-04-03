@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project/screens/address/address.dart';
 import 'package:project/screens/address/empty_address.dart';
+import 'package:project/screens/coupons/discount_coupons_page.dart';
 import 'package:project/screens/favorites/favorites_page.dart';
 import 'package:project/screens/my_reviews/my_reviews_page.dart';
 import 'package:project/screens/user_info/user_info_page.dart';
@@ -12,6 +13,11 @@ import 'core/constants/app_theme.dart';
 import 'widgets/landing_page.dart';
 import 'screens/cart/cart_page.dart';
 import 'screens/favorites/edit_list_page.dart';
+import 'package:project/screens/auth/sign_in_page.dart';
+import 'package:project/screens/auth/sign_up_page.dart';
+import 'package:project/pages/support_page.dart';
+import 'package:project/screens/orders/my_orders_page.dart';
+import 'package:project/screens/payment/payment_page.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -66,12 +72,16 @@ class MyApp extends StatelessWidget {
         AddAddressPage.routeName: (context) => const AddAddressPage(),
         EmptyAddressPage.routeName: (context) => const EmptyAddressPage(),
         MyReviewsPage.routeName: (context) => const MyReviewsPage(),
-        '/discount-coupons':
-            (context) => const PlaceholderPage(title: 'My Discount Coupons'),
+        DiscountCouponsPage.routeName: (context) => const DiscountCouponsPage(),
         '/my-followed-stores':
             (context) => const PlaceholderPage(title: 'My Followed Stores'),
         UserInfoPage.routeName: (context) => const UserInfoPage(),
         '/payment': (context) => const PlaceholderPage(title: 'Payment'),
+        SignInPage.routeName: (context) => const SignInPage(),
+        SignUpPage.routeName: (context) => const SignUpPage(),
+        SupportPage.routeName: (context) => const SupportPage(),
+        MyOrdersPage.routeName: (context) => const MyOrdersPage(),
+        PaymentPage.routeName: (context) => const PaymentPage(),
       },
     );
   }

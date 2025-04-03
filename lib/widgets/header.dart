@@ -41,7 +41,6 @@ class _HeaderState extends State<Header> {
       builder:
           (context) => SignInOverlay(
             isOpen: true,
-            layerLink: _layerLink, // LayerLink'i SignInOverlay'e geçir
             onClose: () {
               _removeOverlay();
               setState(() {

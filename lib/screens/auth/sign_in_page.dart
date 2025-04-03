@@ -51,6 +51,8 @@ class SignInSuccessMessage extends StatelessWidget {
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
+  static const String routeName = '/signin'; // Define route name
+
   @override
   State<SignInPage> createState() => _SignInPageState();
 }

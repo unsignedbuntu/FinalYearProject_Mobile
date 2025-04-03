@@ -51,6 +51,8 @@ class SignupSuccessMessage extends StatelessWidget {
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
+  static const String routeName = '/register'; // Define route name
+
   @override
   State<SignUpPage> createState() => _SignUpPageState();
 }

@@ -4,30 +4,23 @@ import 'package:flutter_svg/flutter_svg.dart';
 class DeliveredIcon extends StatelessWidget {
   final double width;
   final double height;
-  final Color color;
   final VoidCallback? onTap;
 
   const DeliveredIcon({
     super.key,
-    this.width = 40,
-    this.height = 40,
-    this.color = Colors.black,
+    this.width = 32,
+    this.height = 32,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final svgIcon = SvgPicture.string(
-      svgString,
-      width: width,
-      height: height,
-      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-    );
+    final svgIcon = SvgPicture.string(svgString, width: width, height: height);
 
     if (onTap != null) {
       return InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(width / 2),
         child: svgIcon,
       );
     }
@@ -36,10 +29,9 @@ class DeliveredIcon extends StatelessWidget {
   }
 
   static const String svgString = '''
-<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="0.5" y="0.5" width="39" height="39" rx="19.5" fill="white"/>
-<path d="M27.5306 15.4694L17.5306 25.4694L12.5306 20.4694" stroke="#2D9CDB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<rect x="0.5" y="0.5" width="39" height="39" rx="19.5" stroke="#2D9CDB"/>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 30C23.732 30 30 23.732 30 16C30 8.26801 23.732 2 16 2C8.26801 2 2 8.26801 2 16C2 23.732 8.26801 30 16 30Z" fill="#4CAF50"/>
+<path d="M23.0666 9.7334L13.9999 18.8001L10.2666 15.0667L8.3999 16.9334L13.9999 22.5334L24.9332 11.6001L23.0666 9.7334Z" fill="#CCFF90"/>
 </svg>
   ''';
 }

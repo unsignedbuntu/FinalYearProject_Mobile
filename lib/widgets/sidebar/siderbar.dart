@@ -7,10 +7,14 @@ import 'package:project/components/icons/user_inf_sidebar.dart';
 import 'package:project/components/icons/address.dart';
 import 'package:project/components/icons/favorite_sidebar.dart';
 import 'package:project/components/icons/ktun_gpt.dart';
+import 'package:project/components/icons/order.dart'; // Yeni OrderIcon importu
 import 'package:project/screens/address/address.dart';
 import 'package:project/screens/cart/cart_page.dart';
+import 'package:project/screens/coupons/discount_coupons_page.dart';
 import 'package:project/screens/favorites/favorites_page.dart';
+import 'package:project/screens/my_reviews/my_reviews_page.dart';
 import 'package:project/screens/user_info/user_info_page.dart';
+import 'package:project/screens/orders/my_orders_page.dart'; // Yeni MyOrdersPage importu
 
 // Define colors (Web kodundan alınanlar ve mevcutlar)
 const Color sidebarBg = Color(0xFFF8F8F8);
@@ -207,6 +211,15 @@ class Sidebar extends StatelessWidget {
               buildSection(
                 title: "My Orders",
                 items: [
+                  // Yeni: My Orders öğesi
+                  buildClickableItem(
+                    icon: const OrderIcon(width: 41, height: 41), // Yeni ikon
+                    text: "My orders",
+                    routeName: MyOrdersPage.routeName, // Yeni rota
+                    currentPath: currentPath,
+                    iconActualWidth: 41,
+                    iconActualHeight: 41,
+                  ),
                   buildClickableItem(
                     // İkon boyutları web'den alındı
                     icon: const CartMainIcon(width: 48, height: 34),
@@ -221,7 +234,7 @@ class Sidebar extends StatelessWidget {
                     // İkon boyutları web'den alındı
                     icon: const MyReviewsIcon(width: 50, height: 38),
                     text: "My reviews",
-                    routeName: '/my-reviews', // Rota adını tanımla
+                    routeName: MyReviewsPage.routeName, // Rota adını tanımla
                     currentPath: currentPath,
                     iconActualWidth: 50,
                     iconActualHeight: 38,
@@ -235,7 +248,8 @@ class Sidebar extends StatelessWidget {
                   buildClickableItem(
                     icon: const CouponIcon(width: 37, height: 37),
                     text: "My discount coupons",
-                    routeName: '/discount-coupons', // Rota adını tanımla
+                    routeName:
+                        DiscountCouponsPage.routeName, // Rota adını tanımla
                     currentPath: currentPath,
                     iconActualWidth: 37,
                     iconActualHeight: 37,

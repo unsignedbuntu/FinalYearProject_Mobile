@@ -9,7 +9,7 @@ class TicketLineIcon extends StatelessWidget {
 
   const TicketLineIcon({
     super.key,
-    this.width = 100,
+    this.width = 340,
     this.height = 2,
     this.color = Colors.black,
     this.onTap,
@@ -36,8 +36,19 @@ class TicketLineIcon extends StatelessWidget {
   }
 
   static const String svgString = '''
-<svg width="100" height="2" viewBox="0 0 100 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M0 1H100" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
-</svg>
+    <svg 
+      width="340" 
+      height="2" 
+      viewBox="0 0 340 2" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path 
+        d="M0 1H340" 
+        stroke="currentColor" 
+        strokeWidth="2"
+        strokeDasharray="4 4"
+      />
+    </svg>
   ''';
 }
