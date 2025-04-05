@@ -5,3 +5,4 @@ export 'store_service.dart';
 export 'supplier_service.dart';
 export 'loyalty_program_service.dart';
 export 'image_cache_service.dart';
+export 'productsupplier_service.dart';

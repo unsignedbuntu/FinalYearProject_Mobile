@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/widgets/sidebar/siderbar.dart';
 import 'package:project/components/icons/address.dart'; // Import the AddressIcon
+import 'package:go_router/go_router.dart'; // GoRouter importu
 
 class EmptyAddressPage extends StatelessWidget {
   const EmptyAddressPage({Key? key}) : super(key: key);
@@ -62,7 +63,9 @@ class EmptyAddressPage extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           // Navigate to the add new address page
-                          Navigator.pushNamed(context, '/address/new');
+                          context.go(
+                            '/address/new',
+                          ); // GoRouter ile değiştirildi
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(

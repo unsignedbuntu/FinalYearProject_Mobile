@@ -1,69 +1,103 @@
-class ProductModel {
-  final String id;
-  final String name;
-  final String description;
-  final double price;
-  final double? discountPercentage;
-  final List<String> images;
-  final String category;
-  final double rating;
-  final int reviewCount;
-  final bool inStock;
-  final Map<String, dynamic>? attributes;
+import 'package:project/data/models/category_model.dart';
+import 'package:project/data/models/store_model.dart';
 
-  ProductModel({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.price,
-    this.discountPercentage,
-    required this.images,
-    required this.category,
+// Review modelini buraya ekleyelim (eğer ayrı bir dosyada değilse)
+class Review {
+  final double rating;
+  final String comment;
+  final String userName;
+  final String date;
+  final String? avatar; // Avatar yolu (opsiyonel)
+
+  Review({
     required this.rating,
-    required this.reviewCount,
-    required this.inStock,
-    this.attributes,
+    required this.comment,
+    required this.userName,
+    required this.date,
+    this.avatar,
+  });
+}
+
+// Sınıf adını Product olarak değiştir ve alanları API'ye göre güncelle
+class Product {
+  final int productID;
+  final String productName;
+  final int? storeID;
+  final int? categoryID;
+  final Store? store; // İlişkili Store nesnesi
+  final Category? category; // İlişkili Category nesnesi
+  final double price;
+  final int stockQuantity;
+  final String? barcode;
+  final bool? status;
+  String? image; // Görsel yolu (dinamik olarak set edilecek)
+  List<String>? additionalImages; // Ek görseller (dinamik)
+  List<Review>? reviews; // Yorumlar (dinamik)
+  String? description; // Açıklama (dinamik)
+  Map<String, String>? specs; // Özellikler (dinamik)
+  String? categoryName; // Eklenen alan
+
+  Product({
+    required this.productID,
+    required this.productName,
+    this.storeID,
+    this.categoryID,
+    this.store,
+    this.category,
+    required this.price,
+    required this.stockQuantity,
+    this.barcode,
+    this.status,
+    this.image,
+    this.additionalImages,
+    this.reviews,
+    this.description,
+    this.specs,
+    this.categoryName,
   });
 
-  double get discountedPrice {
-    if (discountPercentage == null || discountPercentage! <= 0) {
-      return price;
-    }
-    return price - (price * discountPercentage! / 100);
-  }
-
-  factory ProductModel.fromJson(Map<String, dynamic> json) {
-    return ProductModel(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      price: (json['price'] ?? 0).toDouble(),
-      discountPercentage:
-          json['discountPercentage'] != null
-              ? (json['discountPercentage']).toDouble()
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      productID: json['productID'] as int? ?? 0,
+      productName: json['productName'] as String? ?? 'Unknown Product',
+      storeID: json['storeID'] as int?,
+      categoryID: json['categoryID'] as int?,
+      store:
+          json['store'] != null && json['store'] is Map<String, dynamic>
+              ? Store.fromJson(json['store'] as Map<String, dynamic>)
               : null,
-      images: json['images'] != null ? List<String>.from(json['images']) : [],
-      category: json['category'] ?? '',
-      rating: (json['rating'] ?? 0).toDouble(),
-      reviewCount: json['reviewCount'] ?? 0,
-      inStock: json['inStock'] ?? false,
-      attributes: json['attributes'],
+      category:
+          json['category'] != null && json['category'] is Map<String, dynamic>
+              ? Category.fromJson(json['category'] as Map<String, dynamic>)
+              : null,
+      price: (json['price'] as num? ?? 0.0).toDouble(),
+      stockQuantity: json['stockQuantity'] as int? ?? 0,
+      barcode: json['barcode'] as String?,
+      status: json['status'] as bool?,
+      image: json['image'] as String?,
+      additionalImages:
+          json['additionalImages'] != null
+              ? List<String>.from(json['additionalImages'] as List)
+              : [],
+      categoryName: json['category']?['categoryName'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
-      'description': description,
+      'productID': productID,
+      'productName': productName,
+      'storeID': storeID,
+      'categoryID': categoryID,
+      'store': store?.toJson(),
+      'category': category?.toJson(),
       'price': price,
-      'discountPercentage': discountPercentage,
-      'images': images,
-      'category': category,
-      'rating': rating,
-      'reviewCount': reviewCount,
-      'inStock': inStock,
-      'attributes': attributes,
+      'stockQuantity': stockQuantity,
+      'barcode': barcode,
+      'status': status,
+      'image': image,
+      'additionalImages': additionalImages,
+      'categoryName': categoryName,
     };
   }
 }

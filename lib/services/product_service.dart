@@ -1,4 +1,4 @@
-import '../models/product.dart';
+import 'package:project/data/models/product_model.dart';
 import 'api_service.dart';
 
 class ProductService {

@@ -1,32 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart'; // GoRouter importu eklendi
 import 'package:project/components/icons/arrow_right.dart';
-import 'package:project/models/store.dart';
-import 'package:project/models/category.dart';
-import 'package:project/models/product.dart';
+import 'package:project/data/models/store_model.dart';
+import 'package:project/data/models/category_model.dart';
+import 'package:project/data/models/product_model.dart';
 import 'package:project/services/category_service.dart';
 import 'package:project/services/store_service.dart';
 import 'package:project/services/product_service.dart';
 import 'dart:async';
+// ProductDetailsPage importu artık go_router tarafından yönetildiği için burada gerekli olmayabilir,
+// ama model/extension importları için kalabilir.
+// import 'package:project/screens/product/product_details_page.dart';
 
-// Store model extension - Null güvenliği düzeltildi
+// Store model extension - Getter düzeltildi
 extension StoreExtension on Store {
-  int get storeID => id;
-  String get storeName => name;
+  int get storeIDValue =>
+      storeID; // Modeldeki alanı döndürür (Getter adı farklı)
+  String get storeNameValue =>
+      storeName; // Modeldeki alanı döndürür (Getter adı farklı)
 }
 
-// Category model extension - Null güvenliği düzeltildi
+// Category model extension - storeID kaldırıldı, getter'lar düzeltildi
 extension CategoryExtension on Category {
-  int get categoryID => id;
-  String get categoryName => name;
-  int? get storeID => storeId;
+  int get categoryIDValue =>
+      categoryID; // Modeldeki alanı döndürür (Getter adı farklı)
+  String get categoryNameValue =>
+      categoryName; // Modeldeki alanı döndürür (Getter adı farklı)
+  // int? get storeID => storeID; // Bu kaldırıldı
 }
 
-// Product model extension - Null güvenliği düzeltildi
+// Product model extension - Getter'lar düzeltildi
 extension ProductExtension on Product {
-  int get productID => id;
-  String get productName => name;
-  int? get categoryID => categoryId;
-  int? get storeID => storeId;
+  int get productIDValue =>
+      productID; // Modeldeki alanı döndürür (Getter adı farklı)
+  String get productNameValue =>
+      productName; // Modeldeki alanı döndürür (Getter adı farklı)
+  int? get categoryIDValue =>
+      categoryID; // Modeldeki alanı döndürür (Getter adı farklı, nullable)
+  int? get storeIDValue =>
+      storeID; // Modeldeki alanı döndürür (Getter adı farklı, nullable)
 }
 
 class StoresMegaMenu extends StatefulWidget {
@@ -51,11 +63,11 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
   @override
   void initState() {
     super.initState();
-    // Veri çekme işlemini başlat
     _fetchData();
   }
 
   Future<void> _fetchData() async {
+    // ... (Bu metod aynı kalıyor) ...
     if (!mounted) return;
 
     setState(() {
@@ -98,6 +110,7 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
   }
 
   Future<void> _fetchStores() async {
+    // ... (Bu metod aynı kalıyor) ...
     try {
       final loadedStores = await _storeService.getStores();
       if (mounted && loadedStores.isNotEmpty) {
@@ -107,12 +120,12 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
       }
     } catch (e) {
       debugPrint('Mağaza verisi yüklenirken hata: $e');
-      // Hatayı üst metoda ilet
       throw Exception('Mağaza verisi yüklenemedi: $e');
     }
   }
 
   Future<void> _fetchCategories() async {
+    // ... (Bu metod aynı kalıyor) ...
     try {
       final loadedCategories = await _categoryService.getCategories();
       if (mounted && loadedCategories.isNotEmpty) {
@@ -127,6 +140,7 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
   }
 
   Future<void> _fetchProducts() async {
+    // ... (Bu metod aynı kalıyor) ...
     try {
       final loadedProducts = await _productService.getProducts();
       if (mounted && loadedProducts.isNotEmpty) {
@@ -140,45 +154,60 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
     }
   }
 
-  // Mağaza hover işlemi - düzeltildi
   void _handleStoreHover(Store store) {
+    // ... (Bu metod aynı kalıyor) ...
     if (!mounted) return;
-
     setState(() {
       _selectedStore = store;
     });
   }
 
-  // StoreID'ye göre kategorileri filtrele - null güvenliği düzeltildi
-  List<Category> _getCategoriesByStoreId(int? storeId) {
-    if (storeId == null) return [];
+  // Bir mağazaya ait kategorileri getiren GÜNCELLENMİŞ metot
+  List<Category> _getCategoriesForStore(int? storeId) {
+    if (storeId == null || _products.isEmpty || _categories.isEmpty) return [];
 
-    return _categories
-        .where((category) => category.storeId == storeId)
-        .toList();
+    // 1. Mağazaya ait ürünleri bul
+    final storeProducts = _products.where((p) => p.storeID == storeId).toList();
+    if (storeProducts.isEmpty) return [];
+
+    // 2. Bu ürünlerin benzersiz kategori ID'lerini al
+    final categoryIds =
+        storeProducts
+            .map((p) => p.categoryID)
+            .where((id) => id != null) // Null ID'leri filtrele
+            .toSet(); // Benzersiz hale getir
+    if (categoryIds.isEmpty) return [];
+
+    // 3. Bu ID'lere karşılık gelen kategorileri bul
+    final storeCategories =
+        _categories
+            .where((cat) => categoryIds.contains(cat.categoryID))
+            .toList();
+
+    return storeCategories;
   }
 
-  // CategoryID'ye ve StoreID'ye göre ürünleri filtrele - null güvenliği düzeltildi
+  // Ürünleri kategori ve mağazaya göre getiren metot (Doğru alan adları kullanıldı)
   List<Product> _getProductsByCategoryIdAndStoreId(
     int categoryId,
     int? storeId,
   ) {
     if (storeId == null) {
       return _products
-          .where((product) => product.categoryId == categoryId)
+          .where((product) => product.categoryID == categoryId)
           .toList();
     }
     return _products
         .where(
           (product) =>
-              product.categoryId == categoryId && product.storeId == storeId,
+              product.categoryID == categoryId && product.storeID == storeId,
         )
         .toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Web görseline uygun şekilde tasarlanmış MegaMenu
+    // ... (Bu metod aynı kalıyor, içerik yükleme ve hata durumları) ...
     return Material(
       elevation: 8,
       color: Colors.white,
@@ -218,8 +247,9 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
   }
 
   Widget _buildMegaMenuContent() {
-    // Eğer veri yok ise boş bir içerik göster
+    // ... (Bu metod aynı kalıyor, mağaza yoksa veya veri yükleniyorsa gösterilecekler) ...
     if (_stores.isEmpty) {
+      // ... (Mağaza yok mesajı) ...
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -241,8 +271,9 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Mağazalar listesi (sol kısım)
+        // Mağazalar listesi (sol kısım) - Bu kısım aynı kalıyor
         Container(
+          // ... (Mağaza listesi kodu) ...
           width: 300,
           decoration: BoxDecoration(
             border: Border(
@@ -275,7 +306,9 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
                           itemCount: _stores.length,
                           itemBuilder: (context, index) {
                             final store = _stores[index];
-                            final isSelected = _selectedStore?.id == store.id;
+                            final isSelected =
+                                _selectedStore?.storeIDValue ==
+                                store.storeIDValue;
 
                             return MouseRegion(
                               onEnter: (_) => _handleStoreHover(store),
@@ -298,7 +331,7 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        store.name,
+                                        store.storeNameValue,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight:
@@ -331,27 +364,29 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
           ),
         ),
 
-        // Kategoriler ve ürünler (sağ kısım)
+        // Kategoriler ve ürünler (sağ kısım) - Bu kısım aynı kalıyor
         if (_selectedStore != null)
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 24),
-              child: _buildStoreContent(),
+              child: _buildStoreContentRevised(),
             ),
           ),
       ],
     );
   }
 
-  Widget _buildStoreContent() {
-    // Seçilen mağazaya ait kategorileri getir
-    final storeCategories = _getCategoriesByStoreId(_selectedStore?.id);
+  // --- Mağaza içeriğini GÜNCELLENMİŞ mantıkla oluşturan metot ---
+  Widget _buildStoreContentRevised() {
+    // Güncellenmiş metodu kullan
+    final storeCategories = _getCategoriesForStore(
+      _selectedStore?.storeIDValue,
+    );
 
     if (storeCategories.isEmpty) {
       return const Center(child: Text('Bu mağazaya ait kategori bulunamadı.'));
     }
 
-    // Web'deki 4 kolonlu grid görünümü
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
@@ -362,11 +397,10 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
       itemCount: storeCategories.length,
       itemBuilder: (context, index) {
         final category = storeCategories[index];
-
-        // Bu kategoriye ait ürünleri filtrele
+        // Ürünleri getiren metot doğru alan adlarını zaten kullanıyor
         final categoryProducts = _getProductsByCategoryIdAndStoreId(
-          category.id,
-          _selectedStore?.id,
+          category.categoryIDValue, // Doğru getter
+          _selectedStore?.storeIDValue, // Doğru getter
         );
 
         if (categoryProducts.isEmpty) {
@@ -379,8 +413,8 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
             // Kategori başlığı
             InkWell(
               onTap: () {
-                // Kategori detay sayfasına yönlendir
-                Navigator.pushNamed(context, '/store/details/${category.id}');
+                // Doğru getter: category.categoryIDValue
+                context.push('/store/details/${category.categoryIDValue}');
               },
               child: Container(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -390,7 +424,7 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
                   ),
                 ),
                 child: Text(
-                  category.name,
+                  category.categoryNameValue,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -408,14 +442,12 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
                 itemCount:
                     categoryProducts.length > 6 ? 7 : categoryProducts.length,
                 itemBuilder: (context, productIndex) {
-                  // Son öğe ve ürün sayısı 6'dan fazlaysa "Tümünü Gör" linki göster
                   if (productIndex == 6 && categoryProducts.length > 6) {
                     return InkWell(
                       onTap: () {
-                        // Tüm ürünleri göster sayfasına yönlendir
-                        Navigator.pushNamed(
-                          context,
-                          '/store/details/${category.id}',
+                        // Doğru getter: category.categoryIDValue
+                        context.push(
+                          '/store/details/${category.categoryIDValue}',
                         );
                       },
                       child: const Padding(
@@ -436,13 +468,13 @@ class _StoresMegaMenuState extends State<StoresMegaMenu> {
 
                   return InkWell(
                     onTap: () {
-                      // Ürün detay sayfasına yönlendir
-                      Navigator.pushNamed(context, '/product/${product.id}');
+                      // Doğru getter: product.productIDValue
+                      context.push('/product/${product.productIDValue}');
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Text(
-                        product.name,
+                        product.productNameValue,
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.black87,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -210,7 +211,7 @@ class _LoginPageState extends State<LoginPage> {
                     const Text("Don't have an account?"),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/register');
+                        context.go('/register');
                       },
                       child: const Text('Sign Up'),
                     ),
@@ -247,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
       // TODO: Implement actual login logic
 
       // For demo purposes, just navigate to home
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      context.go('/home');
     }
   }
 }

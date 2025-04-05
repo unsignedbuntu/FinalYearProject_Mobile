@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/components/icons/favorite_icon.dart';
+import 'package:go_router/go_router.dart';
 
 class EmptyFavorites extends StatelessWidget {
   const EmptyFavorites({Key? key}) : super(key: key);
@@ -31,7 +32,7 @@ class EmptyFavorites extends StatelessWidget {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/products');
+                  context.go('/products');
                 },
                 child: Stack(
                   children: [
@@ -70,7 +71,7 @@ class EmptyFavorites extends StatelessWidget {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              Navigator.pushNamed(context, '/products');
+                              context.go('/products');
                             },
                             borderRadius: BorderRadius.circular(15),
                             hoverColor: const Color(

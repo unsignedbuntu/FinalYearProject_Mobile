@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:project/providers/cart_provider.dart';
 import 'package:project/widgets/product_cart_item.dart';
 import 'package:project/widgets/cart_summary.dart';
@@ -287,7 +288,7 @@ class CartPage extends ConsumerWidget {
                   cartNotifier.showCompleteShoppingMessage(true);
                 } else {
                   // Ödeme sayfasına yönlendir (routeName ile)
-                  Navigator.pushNamed(context, PaymentPage.routeName);
+                  context.go(PaymentPage.routeName);
                 }
               },
             ),

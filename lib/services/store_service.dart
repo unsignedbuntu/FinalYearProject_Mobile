@@ -1,4 +1,4 @@
-import '../models/store.dart';
+import 'package:project/data/models/store_model.dart';
 import 'api_service.dart';
 
 class StoreService {

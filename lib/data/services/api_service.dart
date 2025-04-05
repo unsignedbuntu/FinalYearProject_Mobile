@@ -52,7 +52,7 @@ class ApiService {
   }
 
   // Product methods
-  Future<List<ProductModel>> getProducts({
+  Future<List<Product>> getProducts({
     int? page,
     int? limit,
     String? category,
@@ -73,18 +73,18 @@ class ApiService {
 
     final data = await _handleResponse(response);
     return (data['products'] as List)
-        .map((json) => ProductModel.fromJson(json))
+        .map((json) => Product.fromJson(json))
         .toList();
   }
 
-  Future<ProductModel> getProductById(String productId) async {
+  Future<Product> getProductById(String productId) async {
     final response = await http.get(
       Uri.parse('$baseUrl/products/$productId'),
       headers: headers,
     );
 
     final data = await _handleResponse(response);
-    return ProductModel.fromJson(data);
+    return Product.fromJson(data);
   }
 
   // Cart methods

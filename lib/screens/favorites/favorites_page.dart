@@ -7,6 +7,7 @@ import 'package:project/components/messages/cart_success_message.dart';
 import 'package:project/models/product.dart'; // Ana Product modelini import edelim
 import 'package:project/components/icons/menu.dart';
 import 'package:project/components/icons/cart_favorites.dart';
+import 'package:go_router/go_router.dart'; // GoRouter importu
 
 // Favorites sayfası için Product sınıfını genişletelim
 class FavoriteProduct extends Product {
@@ -198,7 +199,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   // Ürünü görüntüle
   void _handleViewProduct(String id) {
-    Navigator.pushNamed(context, '/product/$id');
+    context.push('/product/$id'); // GoRouter ile değiştirildi
   }
 
   // Ürünü kaldır
@@ -472,7 +473,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             // Edit Button (Positioned closer to middle)
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, '/favorites/edit');
+                                context.push('/favorites/edit');
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF00EEFF),
@@ -521,7 +522,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     });
                   },
                   onViewCart: () {
-                    Navigator.pushNamed(context, '/cart');
+                    context.go('/cart');
                   },
                 ),
               ),

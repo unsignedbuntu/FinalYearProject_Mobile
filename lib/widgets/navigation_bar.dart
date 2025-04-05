@@ -7,6 +7,7 @@ import 'dart:ui'; // ImageFilter için eklendi
 
 // --- YENİ --- SupportPage'i import et (DOĞRU YOLU KULLANIN) ---
 import 'package:project/pages/support_page.dart';
+import 'package:go_router/go_router.dart';
 // -------------------------------------------------------------
 
 class NavigationBar extends StatefulWidget {
@@ -33,7 +34,10 @@ class _NavigationBarState extends State<NavigationBar> {
   @override
   void dispose() {
     _storesHoverTimer?.cancel();
-    _hideStoresMegaMenu(); // Dispose olurken açık overlay varsa kaldır
+    // _hideStoresMegaMenu(); // Hatalı setState çağrısına yol açabilir
+    // setState çağırmadan overlay'i doğrudan kaldır
+    _storesMegaMenuEntry?.remove();
+    _storesMegaMenuEntry = null; // Referansı temizle
     super.dispose();
   }
 
@@ -242,7 +246,7 @@ class _NavigationBarState extends State<NavigationBar> {
               );
 
               // Named Route Kullanımı
-              Navigator.pushNamed(context, SupportPage.routeName);
+              context.go(SupportPage.routeName);
             } else {
               // Diğer rotalar (Loyalty, KtunGPT) - Şimdilik sadece print
               final routes = [

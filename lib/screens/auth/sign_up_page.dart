@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:project/components/icons/visible.dart';
 import 'package:project/components/icons/unvisible.dart';
 import 'package:project/components/layouts/sign_in_layout.dart';
+import 'package:go_router/go_router.dart';
 
 class SignupSuccessMessage extends StatelessWidget {
   final VoidCallback onClose;
@@ -111,7 +112,7 @@ class _SignUpPageState extends State<SignUpPage> {
       });
 
       Timer(const Duration(seconds: 3), () {
-        Navigator.pushReplacementNamed(context, '/');
+        context.go('/');
       });
     }
   }
@@ -140,7 +141,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                   // Logo
                   GestureDetector(
-                    onTap: () => Navigator.pushReplacementNamed(context, '/'),
+                    onTap: () => context.go('/'),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.asset(

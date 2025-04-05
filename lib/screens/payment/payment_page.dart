@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Input formatters için
 import 'dart:ui'; // BackdropFilter için
+import 'package:go_router/go_router.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
@@ -100,12 +101,23 @@ class _PaymentPageState extends State<PaymentPage> {
     }
   }
 
-  void _closePage() {
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
+  void _goToStep(int stepIndex) {
+    if (stepIndex >= 0 && stepIndex < 3) {
+      _pageController.animateToPage(
+        stepIndex,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
-    // Gerekirse ana sayfaya yönlendirme de eklenebilir
-    // Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+  }
+
+  void _closePage() {
+    // GoRouter ile pop veya go kullanılabilir. Genellikle pop daha mantıklı.
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/'); // Eğer pop yapılamıyorsa ana sayfaya git
+    }
   }
 
   @override
@@ -680,6 +692,49 @@ class _CardExpiryInputFormatter extends TextInputFormatter {
     return newValue.copyWith(
       text: string,
       selection: TextSelection.collapsed(offset: string.length),
+    );
+  }
+}
+
+class SuccessStep extends StatelessWidget {
+  final VoidCallback onFinish;
+
+  const SuccessStep({super.key, required this.onFinish});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(32.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.check_circle_outline,
+            color: Colors.green,
+            size: 100,
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Payment Successful!',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Your order has been placed successfully.\nYou can track your order in the \'My Orders\' section.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          const SizedBox(height: 32),
+          ElevatedButton(
+            onPressed: onFinish,
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 50),
+            ),
+            child: const Text('Finish Shopping'),
+          ),
+        ],
+      ),
     );
   }
 }

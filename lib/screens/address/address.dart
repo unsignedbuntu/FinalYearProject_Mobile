@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/widgets/sidebar/siderbar.dart';
 import 'package:project/components/messages/address_success_message.dart';
+import 'package:go_router/go_router.dart';
 
 // List of Turkish cities
 const List<String> cities = [
@@ -140,7 +141,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
     });
     // Navigate back or to the address list page after closing success message
     // Example: Navigate to an empty address page if it exists
-    Navigator.pushReplacementNamed(context, '/address/empty');
+    context.go('/address/empty');
   }
 
   @override

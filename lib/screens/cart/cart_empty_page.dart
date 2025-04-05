@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:project/widgets/sidebar/siderbar.dart';
+import 'package:go_router/go_router.dart'; // GoRouter importu
 
 // Define colors and fonts for clarity
 const Color emptyCartBg = Color(0xFFD9D9D9);
 const Color emptyCartButtonBg = Color(0xFF00EEFF);
-const Color emptyCartButtonHoverBg =
-    Color(0xFF2F00FF); // Note: Hover is mainly web/desktop
+const Color emptyCartButtonHoverBg = Color(
+  0xFF2F00FF,
+); // Note: Hover is mainly web/desktop
 const Color emptyCartButtonText = Colors.black;
 const Color emptyCartButtonHoverText = Colors.white;
 const String ralewayFont = 'Raleway';
@@ -34,7 +36,8 @@ class EmptyCartPage extends StatelessWidget {
           Positioned(
             // ml-[580px] mt-[160px] -> Use left/top for positioning
             left: 580.0,
-            top: 160.0 +
+            top:
+                160.0 +
                 55.0, // Add sidebar's top offset if needed, or adjust based on app bar presence
             child: Container(
               // w-[835px] h-[250px] bg-[#D9D9D9] rounded-lg relative
@@ -82,17 +85,19 @@ class EmptyCartPage extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         // Navigate to home page
-                        Navigator.pushNamedAndRemoveUntil(context, '/',
-                            (route) => false); // Go to home and clear stack
+                        context.go('/'); // GoRouter ile değiştirildi
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: emptyCartButtonBg,
                         foregroundColor: emptyCartButtonText, // Text color
-                        minimumSize:
-                            const Size(320.0, 54.0), // w-[320px] h-[54px]
+                        minimumSize: const Size(
+                          320.0,
+                          54.0,
+                        ), // w-[320px] h-[54px]
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(15.0), // rounded-[15px]
+                          borderRadius: BorderRadius.circular(
+                            15.0,
+                          ), // rounded-[15px]
                         ),
                         padding:
                             EdgeInsets.zero, // Remove default padding if needed

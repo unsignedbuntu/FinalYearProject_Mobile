@@ -22,6 +22,7 @@ export 'icon_helper.dart';
 export 'information.dart';
 export 'ktun_gpt.dart';
 export 'menu.dart';
+export 'order.dart';
 export 'my_reviews.dart';
 export 'review.dart';
 export 'search.dart';

@@ -4,6 +4,7 @@ import 'package:project/widgets/sign_in_button.dart';
 import 'package:project/widgets/favorite_button.dart'; // <-- YENİ İMPORT
 import 'package:project/widgets/cart_button.dart'; // <-- YENİ İMPORT (Bu dosyanın var olduğunu varsayıyoruz)
 import 'package:project/screens/cart/cart_page.dart'; // Import the cart page
+import 'package:go_router/go_router.dart'; // GoRouter importu
 
 class Header extends StatefulWidget {
   const Header({super.key});
@@ -97,7 +98,7 @@ class _HeaderState extends State<Header> {
                       ),
                       onPressed: () {
                         // Ana sayfaya yönlendirme
-                        Navigator.pushReplacementNamed(context, '/');
+                        context.go('/'); // GoRouter ile değiştirildi
                       },
                     ),
                   ),
@@ -178,7 +179,7 @@ class _HeaderState extends State<Header> {
                     onTap: () {
                       // Favoriler sayfasına gitme işlemi
                       print("Favorites Tapped!"); // Örnek eylem
-                      Navigator.pushNamed(context, '/favorites');
+                      context.go('/favorites'); // GoRouter ile değiştirildi
                     },
                     // isSelected: false, // Gerekirse bu parametreyi kullanabilirsiniz
                   ),
@@ -190,7 +191,7 @@ class _HeaderState extends State<Header> {
                     onTap: () {
                       // Sepet sayfasına gitme işlemi
                       print("Cart Tapped!"); // Debugging için
-                      Navigator.pushNamed(context, '/cart');
+                      context.go('/cart'); // GoRouter ile değiştirildi
                     },
                     // isSelected: false, // Gerekirse bu parametreyi kullanabilirsiniz
                   ),

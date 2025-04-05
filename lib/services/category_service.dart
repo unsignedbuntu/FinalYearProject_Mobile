@@ -1,4 +1,4 @@
-import '../models/category.dart';
+import 'package:project/data/models/category_model.dart';
 import 'api_service.dart';
 
 class CategoryService {

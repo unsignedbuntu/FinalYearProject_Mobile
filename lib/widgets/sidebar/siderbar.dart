@@ -15,6 +15,7 @@ import 'package:project/screens/favorites/favorites_page.dart';
 import 'package:project/screens/my_reviews/my_reviews_page.dart';
 import 'package:project/screens/user_info/user_info_page.dart';
 import 'package:project/screens/orders/my_orders_page.dart'; // Yeni MyOrdersPage importu
+import 'package:go_router/go_router.dart';
 
 // Define colors (Web kodundan alınanlar ve mevcutlar)
 const Color sidebarBg = Color(0xFFF8F8F8);
@@ -32,15 +33,16 @@ class Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Mevcut rotayı almak için daha güvenilir yöntem (Eğer MaterialApp kullanıyorsanız)
-    final String? currentPath = ModalRoute.of(context)?.settings.name;
+    // Mevcut rotayı GoRouter'ın routerDelegate'inden al
+    final String currentLocation =
+        GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString();
 
     // Tıklanabilir menü öğesi oluşturan yardımcı fonksiyon
     Widget buildClickableItem({
       required Widget icon,
       required String text,
-      required String routeName,
-      required String? currentPath,
+      required String routeName, // Bu hala '/favorites' gibi path olmalı
+      required String currentLocation, // Mevcut rota path'i
       double iconWidth = 40.0, // İkon alanı genişliği
       double? iconActualWidth, // İkonun kendi genişliği (opsiyonel)
       double? iconActualHeight, // İkonun kendi yüksekliği (opsiyonel)
@@ -49,7 +51,8 @@ class Sidebar extends StatelessWidget {
         horizontal: 12.0,
       ), // Padding ayarı
     }) {
-      final bool isActive = currentPath == routeName;
+      // Aktif durumu mevcut location ile kontrol et
+      final bool isActive = currentLocation == routeName;
 
       // İkonu boyutlandırmak için bir sarmalayıcı
       Widget sizedIcon = SizedBox(
@@ -88,10 +91,9 @@ class Sidebar extends StatelessWidget {
         // Hover efekti ve tıklama için InkWell
         child: InkWell(
           onTap: () {
-            // Aktif değilse ve rota farklıysa sayfaya git
-            if (!isActive &&
-                ModalRoute.of(context)?.settings.name != routeName) {
-              Navigator.pushNamed(context, routeName);
+            // Aktif değilse sayfaya git
+            if (!isActive) {
+              context.go(routeName);
             }
           },
           hoverColor: hoverColor, // Fare üzerine gelince renk
@@ -211,31 +213,27 @@ class Sidebar extends StatelessWidget {
               buildSection(
                 title: "My Orders",
                 items: [
-                  // Yeni: My Orders öğesi
                   buildClickableItem(
-                    icon: const OrderIcon(width: 41, height: 41), // Yeni ikon
+                    icon: const OrderIcon(width: 41, height: 41),
                     text: "My orders",
-                    routeName: MyOrdersPage.routeName, // Yeni rota
-                    currentPath: currentPath,
+                    routeName: MyOrdersPage.routeName,
+                    currentLocation: currentLocation, // Burası doğru
                     iconActualWidth: 41,
                     iconActualHeight: 41,
                   ),
                   buildClickableItem(
-                    // İkon boyutları web'den alındı
                     icon: const CartMainIcon(width: 48, height: 34),
                     text: "My cart",
-                    routeName:
-                        CartPage.routeName, // '/cart' yerine sabit kullanıldı
-                    currentPath: currentPath,
-                    iconActualWidth: 48, // Prop olarak geçilen değerler
+                    routeName: CartPage.routeName,
+                    currentLocation: currentLocation, // currentLocation'ı geçir
+                    iconActualWidth: 48,
                     iconActualHeight: 34,
                   ),
                   buildClickableItem(
-                    // İkon boyutları web'den alındı
                     icon: const MyReviewsIcon(width: 50, height: 38),
                     text: "My reviews",
-                    routeName: MyReviewsPage.routeName, // Rota adını tanımla
-                    currentPath: currentPath,
+                    routeName: MyReviewsPage.routeName,
+                    currentLocation: currentLocation, // currentLocation'ı geçir
                     iconActualWidth: 50,
                     iconActualHeight: 38,
                   ),
@@ -248,17 +246,16 @@ class Sidebar extends StatelessWidget {
                   buildClickableItem(
                     icon: const CouponIcon(width: 37, height: 37),
                     text: "My discount coupons",
-                    routeName:
-                        DiscountCouponsPage.routeName, // Rota adını tanımla
-                    currentPath: currentPath,
+                    routeName: DiscountCouponsPage.routeName,
+                    currentLocation: currentLocation, // currentLocation'ı geçir
                     iconActualWidth: 37,
                     iconActualHeight: 37,
                   ),
                   buildClickableItem(
                     icon: const StoresIcon(width: 37, height: 37),
                     text: "My followed stores",
-                    routeName: '/my-followed-stores', // Rota adını tanımla
-                    currentPath: currentPath,
+                    routeName: '/my-followed-stores',
+                    currentLocation: currentLocation, // currentLocation'ı geçir
                     iconActualWidth: 37,
                     iconActualHeight: 37,
                   ),
@@ -271,29 +268,28 @@ class Sidebar extends StatelessWidget {
                   buildClickableItem(
                     icon: const UserInfSidebarIcon(width: 37, height: 37),
                     text: "My user information",
-                    routeName: UserInfoPage.routeName, // Rota adını tanımla
-                    currentPath: currentPath,
+                    routeName: UserInfoPage.routeName,
+                    currentLocation: currentLocation, // currentLocation'ı geçir
                     iconActualWidth: 37,
                     iconActualHeight: 37,
                   ),
                   buildClickableItem(
-                    // AddressIcon'a renk prop'u varsa kullanıldı
                     icon: const AddressIcon(
                       width: 37,
                       height: 37,
                       color: defaultTextColor,
                     ),
                     text: "My address information",
-                    routeName: AddAddressPage.routeName, // Rota adını tanımla
-                    currentPath: currentPath,
+                    routeName: AddAddressPage.routeName,
+                    currentLocation: currentLocation, // currentLocation'ı geçir
                     iconActualWidth: 37,
                     iconActualHeight: 37,
                   ),
                   buildClickableItem(
                     icon: const FavoriteSidebarIcon(width: 37, height: 37),
                     text: "My favorites",
-                    routeName: FavoritesPage.routeName, // Rota adını tanımla
-                    currentPath: currentPath,
+                    routeName: FavoritesPage.routeName,
+                    currentLocation: currentLocation, // currentLocation'ı geçir
                     iconActualWidth: 37,
                     iconActualHeight: 37,
                   ),

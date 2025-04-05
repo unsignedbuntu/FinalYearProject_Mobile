@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:project/components/icons/visible.dart';
 import 'package:project/components/icons/unvisible.dart';
 import 'package:project/components/layouts/sign_in_layout.dart';
+import 'package:go_router/go_router.dart'; // GoRouter importu
+import 'sign_up_page.dart'; // SignUpPage importu eklendi
 
 class SignInSuccessMessage extends StatelessWidget {
   final VoidCallback onClose;
@@ -69,7 +71,7 @@ class _SignInPageState extends State<SignInPage> {
     });
 
     Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/');
+      context.go('/'); // GoRouter ile değiştirildi
     });
   }
 
@@ -97,7 +99,7 @@ class _SignInPageState extends State<SignInPage> {
 
                   // Logo
                   GestureDetector(
-                    onTap: () => Navigator.pushReplacementNamed(context, '/'),
+                    onTap: () => context.go('/'), // GoRouter ile değiştirildi
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.asset(
@@ -207,7 +209,9 @@ class _SignInPageState extends State<SignInPage> {
                         // Forgot Password
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/forgot-password');
+                            context.go(
+                              '/forgot-password',
+                            ); // GoRouter ile değiştirildi
                           },
                           child: const Text(
                             'Forgot Your Password?',
@@ -252,7 +256,7 @@ class _SignInPageState extends State<SignInPage> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(context, '/sign-up');
+                                context.go(SignUpPage.routeName);
                               },
                               child: const Text(
                                 'Sign Up',
